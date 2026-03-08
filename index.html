@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Tools Directory | By Shelly Or Gisser</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-primary: #050505;
@@ -180,21 +180,38 @@
         }
         .footer-social a:hover { background: rgba(66,133,244,0.1); }
         .footer-curator {
-            margin-top: 20px; padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-top: 28px; padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .footer-cta-title {
+            font-family: 'Heebo', sans-serif; font-size: clamp(20px, 3vw, 26px);
+            font-weight: 700; color: var(--text); margin-bottom: 10px; direction: rtl;
+        }
+        .footer-cta-desc {
+            font-family: 'Heebo', sans-serif; font-size: 14px; color: var(--text-muted);
+            line-height: 1.9; margin-bottom: 20px; max-width: 540px;
+            margin-left: auto; margin-right: auto; direction: rtl;
         }
         .footer-curator-name {
-            font-size: 18px; font-weight: 800; margin-bottom: 4px;
+            font-size: clamp(24px, 3.5vw, 34px); font-weight: 900; margin-bottom: 6px;
             background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-size: 200% auto; animation: shine 10s linear infinite;
         }
-        .footer-curator-role { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+        .footer-curator-role {
+            font-family: 'Heebo', sans-serif; font-size: 14px; color: var(--text-secondary);
+            margin-bottom: 8px; direction: rtl;
+        }
+        .footer-ai-fields {
+            font-family: 'Heebo', sans-serif; font-size: 12px; color: var(--text-muted);
+            margin-bottom: 16px; direction: rtl; line-height: 1.8;
+        }
         .footer-cta {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 8px 22px; border-radius: 100px; font-size: 13px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px; border-radius: 100px; font-size: 14px; font-weight: 700;
             text-decoration: none; color: #000; background: var(--gradient);
             background-size: 200% auto; transition: all 0.3s; margin-top: 8px;
         }
-        .footer-cta:hover { background-position: right center; transform: translateY(-1px); }
+        .footer-cta:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(150,230,255,0.2); }
 
         /* SEARCH */
         .search-container {
@@ -498,18 +515,21 @@
         Tools Directory
     </p>
     <div class="footer-curator">
+        <div class="footer-cta-title">רוצים להעמיק? בואו נדבר.</div>
+        <div class="footer-cta-desc">
+            מעבירה סדנאות, הרצאות וליווי מקצועי בתחומי טכנולוגיה, AI, דיגיטל וחדשנות — מותאם בדיוק לצוות, לארגון, או לקהל שלכם.
+        </div>
         <div class="footer-curator-name">Shelly Or Gisser</div>
-        <div class="footer-curator-role">Lecturer &bull; Tech Consultant &bull; Workshop Leader</div>
+        <div class="footer-curator-role">מרצה | יועצת טכנולוגיה | מובילת סדנאות</div>
+        <div class="footer-ai-fields">
+            Generative AI &bull; Prompt Engineering &bull; AI Tools &amp; Workflows &bull; ChatGPT, Gemini &amp; Copilot &bull; AI for Business &bull; Digital Transformation &bull; Data &amp; Analytics &bull; Innovation &amp; Emerging Tech
+        </div>
         <div class="footer-social">
             <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank">LinkedIn</a>
             <a href="https://www.facebook.com/shelly.or.gisser" target="_blank">Facebook</a>
             <a href="https://www.instagram.com/shelly_or_gisser/" target="_blank">Instagram</a>
-            <a href="recommend.html" target="_blank">🎯 Personalized Toolkit</a>
         </div>
-        <p style="margin-top:10px; font-size:13px; color:var(--text-muted); max-width:440px; margin-left:auto; margin-right:auto; line-height:1.7;">
-            Workshops, lectures &amp; professional consulting in Technology, AI, Digital &amp; Innovation
-        </p>
-        <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank" class="footer-cta">Let's talk &rarr;</a>
+        <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank" class="footer-cta">בואו נדבר &larr;</a>
     </div>
     <p style="margin-top:20px; font-size:12px; color:#555;">&copy; 2026 Shelly Or Gisser &mdash; All rights reserved. All product names and logos are trademarks of Google LLC.</p>
 </footer>
