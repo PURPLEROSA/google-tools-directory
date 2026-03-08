@@ -123,12 +123,26 @@
         .curator-block {
             margin-bottom: 36px; text-align: center;
         }
+        .curator-created {
+            font-size: clamp(14px, 2vw, 17px); font-weight: 300;
+            color: var(--text-secondary); letter-spacing: 0.5px;
+        }
         .curator-name {
             font-size: clamp(28px, 4vw, 42px); font-weight: 900;
             letter-spacing: -1px; margin-bottom: 6px;
             background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-size: 200% auto; animation: shine 10s linear infinite;
         }
+        .hero-cta {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 14px 36px; border-radius: 100px;
+            font-size: 16px; font-weight: 700; text-decoration: none;
+            background: var(--gradient); color: #000; background-size: 200% auto;
+            animation: shine 10s linear infinite;
+            transition: all 0.3s; margin-top: 24px;
+            box-shadow: 0 4px 20px rgba(150,230,255,0.15);
+        }
+        .hero-cta:hover { background-position: right center; transform: translateY(-3px); box-shadow: 0 8px 30px rgba(150,230,255,0.25); }
         .curator-role {
             font-size: clamp(14px, 2vw, 17px); color: var(--text-secondary);
             margin-bottom: 16px; font-weight: 400; letter-spacing: 0.5px;
@@ -418,6 +432,7 @@
 <!-- HERO -->
 <section class="hero">
     <div class="curator-block">
+        <div class="curator-created">Created by</div>
         <div class="curator-name">Shelly Or Gisser</div>
         <div class="curator-role">Lecturer &bull; Tech Consultant &bull; Workshop Leader</div>
         <div class="social-links">
@@ -434,7 +449,6 @@
                 Instagram
             </a>
         </div>
-        <a href="recommend.html" class="curator-cta-link">🎯 Get Your Personalized Toolkit</a>
         <div class="curator-hint">Workshops, lectures &amp; consulting in Technology, AI, Digital &amp; Innovation &mdash; <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank" style="color:var(--accent-blue); text-decoration:none;">Let's talk &rarr;</a></div>
     </div>
     <h1>
@@ -443,6 +457,7 @@
         Tools Directory
     </h1>
     <p>Every Google tool, app and AI experiment — organized by category with descriptions, pricing and direct links. Your one-stop reference for the Google ecosystem.</p>
+    <a href="recommend.html" class="hero-cta">🎯 Match Your Perfect AI Tools</a>
 </section>
 
 <!-- SEARCH -->
