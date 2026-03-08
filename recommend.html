@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Tools Recommender — Shelly Or Gisser</title>
+    <meta name="description" content="ענה על 5 שאלות קצרות וקבל המלצה מותאמת אישית לכלי Google הכי רלוונטיים לעבודה שלך.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.08);
+            --text: #F0F0F0;
+            --text-dim: #A0A0A0;
+            --text-muted: #606060;
+            --holo-pink: #ffb7b7;
+            --holo-purple: #c3a6ff;
+            --holo-blue: #96e6ff;
+            --holo-orange: #ffd8be;
+            --holo-green: #b4ffda;
+            --gradient: linear-gradient(135deg, #ffb7b7 0%, #e1b7ff 25%, #96e6ff 50%, #b4ffda 75%, #ffd8be 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Heebo', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; overflow: hidden; filter: blur(100px); opacity: 0.22;
+        }
+        .blob { position: absolute; width: 600px; height: 600px; border-radius: 50%; animation: blobMove 25s infinite alternate ease-in-out; }
+        .blob-1 { background: var(--holo-pink); top: -10%; left: -10%; }
+        .blob-2 { background: var(--holo-purple); bottom: -10%; right: -10%; animation-delay: -5s; }
+        .blob-3 { background: var(--holo-blue); top: 40%; right: 20%; animation-delay: -10s; }
+        .blob-4 { background: var(--holo-orange); bottom: 20%; left: 10%; animation-delay: -15s; }
+        @keyframes blobMove { from { transform: translate(0,0) rotate(0deg) scale(1); } to { transform: translate(150px,100px) rotate(30deg) scale(1.3); } }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 100;
+            background: rgba(255,255,255,0.05);
+        }
+        .progress-fill {
+            height: 100%; background: var(--gradient); transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+            background-size: 200% auto;
+        }
+
+        .container {
+            max-width: 900px; margin: 0 auto; padding: 40px 24px;
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .step {
+            display: none; opacity: 0; transform: translateY(30px);
+            transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+        }
+        .step.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .step-label {
+            font-size: 13px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--holo-purple); margin-bottom: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+        .step h2 {
+            font-size: clamp(24px, 4vw, 38px); font-weight: 700;
+            margin-bottom: 8px; line-height: 1.3;
+        }
+        .step .subtitle {
+            font-size: 16px; color: var(--text-dim); margin-bottom: 32px; line-height: 1.7;
+        }
+
+        .options { display: grid; gap: 12px; }
+        .options.grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .options.grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .options.grid-4 { grid-template-columns: repeat(2, 1fr); }
+
+        .option-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 20px; cursor: pointer;
+            transition: all 0.3s ease; position: relative; backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .option-card:hover {
+            border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.05);
+            transform: translateY(-2px);
+        }
+        .option-card.selected {
+            border-color: rgba(150,230,255,0.4);
+            background: rgba(150,230,255,0.08);
+            box-shadow: 0 0 30px rgba(150,230,255,0.1);
+        }
+        .option-card .icon { font-size: 28px; margin-bottom: 4px; }
+        .option-card .label { font-size: 15px; font-weight: 700; }
+        .option-card .desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+        .option-card .check {
+            position: absolute; top: 12px; left: 12px; width: 22px; height: 22px;
+            border-radius: 50%; border: 2px solid var(--border); transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+        }
+        .option-card.selected .check {
+            background: var(--gradient); border-color: transparent; color: #000;
+        }
+
+        .nav-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 32px; gap: 16px;
+        }
+        .btn {
+            padding: 14px 32px; border-radius: 12px; border: none; cursor: pointer;
+            font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 600;
+            transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-primary {
+            background: var(--gradient); color: #000;
+            background-size: 200% auto;
+        }
+        .btn-primary:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(150,230,255,0.2); }
+        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-secondary {
+            background: rgba(255,255,255,0.05); color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+
+        .landing-title {
+            font-size: clamp(32px, 5vw, 52px); font-weight: 900;
+            line-height: 1.2; margin-bottom: 16px;
+            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-size: 200% auto; animation: shine 10s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        .landing-desc { font-size: 18px; color: var(--text-dim); line-height: 1.8; margin-bottom: 40px; max-width: 600px; }
+        .landing-features { display: flex; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; }
+        .landing-feature { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-dim); }
+        .landing-feature .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--holo-blue); }
+
+        .results-header { margin-bottom: 32px; }
+        .results-header h2 {
+            font-size: clamp(24px, 4vw, 36px); font-weight: 800; margin-bottom: 8px;
+            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .results-header p { color: var(--text-dim); font-size: 15px; line-height: 1.7; }
+        .results-summary { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+        .summary-tag {
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
+            background: rgba(195,166,255,0.1); color: var(--holo-purple);
+            border: 1px solid rgba(195,166,255,0.2);
+        }
+
+        .section-title {
+            font-size: 20px; font-weight: 700; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .tool-results { display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
+        .result-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px; backdrop-filter: blur(15px);
+            transition: all 0.4s; display: flex; gap: 20px; align-items: flex-start;
+        }
+        .result-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        .result-rank {
+            min-width: 40px; height: 40px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px; font-family: 'Inter', sans-serif;
+        }
+        .rank-1 { background: linear-gradient(135deg, #ffd8be, #ffb7b7); color: #000; }
+        .rank-2 { background: linear-gradient(135deg, #c3a6ff, #96e6ff); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #b4ffda, #96e6ff); color: #000; }
+        .rank-other { background: rgba(255,255,255,0.08); color: var(--text-dim); }
+        .result-info { flex: 1; }
+        .result-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .result-desc { font-size: 13px; color: var(--text-dim); line-height: 1.7; margin-bottom: 10px; }
+        .result-why {
+            font-size: 12px; color: var(--holo-green); padding: 8px 12px;
+            background: rgba(180,255,218,0.06); border-radius: 8px;
+            border: 1px solid rgba(180,255,218,0.1); margin-bottom: 10px; line-height: 1.6;
+        }
+        .result-meta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .result-tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+        .tag-free { background: rgba(180,255,218,0.1); color: var(--holo-green); }
+        .tag-freemium { background: rgba(150,230,255,0.1); color: var(--holo-blue); }
+        .tag-paid { background: rgba(255,216,190,0.1); color: var(--holo-orange); }
+        .tag-no-israel { background: rgba(255,183,183,0.1); color: var(--holo-pink); }
+        .result-link {
+            font-size: 12px; color: var(--holo-blue); text-decoration: none;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .result-link:hover { text-decoration: underline; }
+
+        .workshop-section { margin-bottom: 40px; }
+        .workshop-box {
+            background: linear-gradient(135deg, rgba(255,183,183,0.06), rgba(195,166,255,0.06), rgba(150,230,255,0.06));
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px;
+        }
+        .workshop-box .workshop-title { font-size: 20px; font-weight: 700; color: var(--holo-blue); margin-bottom: 8px; }
+        .workshop-box .workshop-desc { font-size: 14px; color: var(--text-dim); line-height: 1.8; margin-bottom: 16px; }
+        .workshop-agenda { list-style: none; padding: 0; }
+        .workshop-agenda li {
+            padding: 10px 16px; font-size: 13px; color: var(--text-dim);
+            border-right: 2px solid var(--holo-purple); margin-bottom: 6px;
+            background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; line-height: 1.6;
+        }
+        .workshop-agenda li strong { color: var(--text); }
+
+        .shelly-cta {
+            background: linear-gradient(135deg, rgba(195,166,255,0.08), rgba(150,230,255,0.08));
+            border: 1px solid rgba(195,166,255,0.15); border-radius: 20px;
+            padding: 28px; text-align: center; margin-top: 40px;
+        }
+        .shelly-cta .cta-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .shelly-cta .cta-subtitle {
+            font-size: 14px; color: var(--text-dim); line-height: 1.8; margin-bottom: 20px;
+            max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+        .shelly-cta .cta-name {
+            font-size: 16px; font-weight: 800; margin-bottom: 4px;
+            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .shelly-cta .cta-role { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+        .shelly-links {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px;
+        }
+        .shelly-links a {
+            padding: 8px 18px; border-radius: 10px; font-size: 13px; font-weight: 500;
+            text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 6px;
+        }
+        .shelly-links .link-linkedin { background: rgba(150,230,255,0.12); color: var(--holo-blue); border: 1px solid rgba(150,230,255,0.2); }
+        .shelly-links .link-facebook { background: rgba(195,166,255,0.12); color: var(--holo-purple); border: 1px solid rgba(195,166,255,0.2); }
+        .shelly-links .link-instagram { background: rgba(255,183,183,0.12); color: var(--holo-pink); border: 1px solid rgba(255,183,183,0.2); }
+        .shelly-links .link-site { background: rgba(180,255,218,0.12); color: var(--holo-green); border: 1px solid rgba(180,255,218,0.2); }
+        .shelly-links a:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+        .cta-contact-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px; border-radius: 12px; border: none; cursor: pointer;
+            font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 700;
+            background: var(--gradient); color: #000; background-size: 200% auto;
+            transition: all 0.3s; text-decoration: none;
+        }
+        .cta-contact-btn:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(150,230,255,0.2); }
+
+        .page-footer {
+            text-align: center; padding: 24px; font-size: 12px; color: var(--text-muted);
+            border-top: 1px solid var(--border); margin-top: 20px;
+        }
+        .page-footer a { color: var(--holo-blue); text-decoration: none; }
+        .page-footer a:hover { text-decoration: underline; }
+        .page-footer .footer-links { display: flex; gap: 16px; justify-content: center; margin-top: 8px; }
+
+        @media (max-width: 600px) {
+            .options.grid-2, .options.grid-3, .options.grid-4 { grid-template-columns: 1fr; }
+            .result-card { flex-direction: column; }
+            .landing-features { flex-direction: column; gap: 12px; }
+            .container { padding: 24px 16px; }
+            .shelly-links { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-glow">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="blob blob-3"></div><div class="blob blob-4"></div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="container">
+
+    <!-- STEP 0: Landing -->
+    <div class="step active" id="step-0">
+        <div class="step-label">Google Tools Recommender</div>
+        <h1 class="landing-title">מצא את הכלים<br>שמתאימים בדיוק לך</h1>
+        <p class="landing-desc">ענה על 5 שאלות קצרות וקבל המלצה מותאמת אישית לכלי Google הכי רלוונטיים לעבודה שלך — כולל הצעה למבנה סדנה.</p>
+        <div class="landing-features">
+            <div class="landing-feature"><div class="dot"></div> 136 כלים ממופים</div>
+            <div class="landing-feature"><div class="dot"></div> 12 קטגוריות</div>
+            <div class="landing-feature"><div class="dot"></div> סינון לפי ישראל</div>
+            <div class="landing-feature"><div class="dot"></div> הצעת סדנה מותאמת</div>
+        </div>
+        <button class="btn btn-primary" onclick="goToStep(1)">בואו נתחיל &larr;</button>
+        <div style="margin-top:48px; font-size:13px; color:var(--text-dim); line-height:1.8;">
+            <span style="font-weight:700; color:var(--text);">Shelly Or Gisser</span> &mdash;
+            מרצה, יועצת טכנולוגיה ומובילת סדנאות בתחומי AI, דיגיטל וחדשנות
+        </div>
+    </div>
+
+    <!-- STEP 1: Goal -->
+    <div class="step" id="step-1">
+        <div class="step-label">שאלה 1 מתוך 5</div>
+        <h2>מה המטרה העיקרית שלך?</h2>
+        <p class="subtitle">בחר מטרה אחת או יותר — נתאים לך את הכלים הכי רלוונטיים.</p>
+        <div class="options grid-4" id="goals-options"></div>
+        <div class="nav-row">
+            <button class="btn btn-secondary" onclick="goToStep(0)">&rarr; חזרה</button>
+            <button class="btn btn-primary" id="btn-step1" disabled onclick="goToStep(2)">המשך &larr;</button>
+        </div>
+    </div>
+
+    <!-- STEP 2: Role -->
+    <div class="step" id="step-2">
+        <div class="step-label">שאלה 2 מתוך 5</div>
+        <h2>מה התפקיד שלך?</h2>
+        <p class="subtitle">זה עוזר לנו להתאים את רמת הכלים ומורכבותם.</p>
+        <div class="options grid-3" id="role-options"></div>
+        <div class="nav-row">
+            <button class="btn btn-secondary" onclick="goToStep(1)">&rarr; חזרה</button>
+            <button class="btn btn-primary" id="btn-step2" disabled onclick="goToStep(3)">המשך &larr;</button>
+        </div>
+    </div>
+
+    <!-- STEP 3: Budget -->
+    <div class="step" id="step-3">
+        <div class="step-label">שאלה 3 מתוך 5</div>
+        <h2>מה התקציב שלך?</h2>
+        <p class="subtitle">נסנן כלים שמתאימים לתקציב.</p>
+        <div class="options grid-4" id="budget-options"></div>
+        <div class="nav-row">
+            <button class="btn btn-secondary" onclick="goToStep(2)">&rarr; חזרה</button>
+            <button class="btn btn-primary" id="btn-step3" disabled onclick="goToStep(4)">המשך &larr;</button>
+        </div>
+    </div>
+
+    <!-- STEP 4: Israel -->
+    <div class="step" id="step-4">
+        <div class="step-label">שאלה 4 מתוך 5</div>
+        <h2>חייב להיות זמין בישראל?</h2>
+        <p class="subtitle">חלק מהכלים עדיין לא זמינים באזור שלנו.</p>
+        <div class="options grid-2" id="israel-options"></div>
+        <div class="nav-row">
+            <button class="btn btn-secondary" onclick="goToStep(3)">&rarr; חזרה</button>
+            <button class="btn btn-primary" id="btn-step4" disabled onclick="goToStep(5)">המשך &larr;</button>
+        </div>
+    </div>
+
+    <!-- STEP 5: Level -->
+    <div class="step" id="step-5">
+        <div class="step-label">שאלה 5 מתוך 5</div>
+        <h2>מה הרמה הטכנית שלך?</h2>
+        <p class="subtitle">נמליץ על כלים שמתאימים לרמת הניסיון שלך.</p>
+        <div class="options grid-3" id="level-options"></div>
+        <div class="nav-row">
+            <button class="btn btn-secondary" onclick="goToStep(4)">&rarr; חזרה</button>
+            <button class="btn btn-primary" id="btn-step5" disabled onclick="showResults()">הצג המלצות &larr;</button>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="step" id="step-results">
+        <div class="results-header">
+            <h2>ארגז הכלים המותאם לך</h2>
+            <p>בהתבסס על התשובות שלך, הנה הכלים שהכי מתאימים לצרכים שלך:</p>
+        </div>
+        <div class="results-summary" id="resultsSummary"></div>
+
+        <div class="section-title">🧰 הכלים שנבחרו עבורך</div>
+        <div class="tool-results" id="toolResults"></div>
+
+        <div class="workshop-section">
+            <div class="section-title">🎓 הסדנה המתאימה לך</div>
+            <div class="workshop-box" id="workshopBox"></div>
+        </div>
+
+        <div class="shelly-cta">
+            <div class="cta-title">רוצים להעמיק? בואו נדבר.</div>
+            <div class="cta-subtitle">
+                מעבירה סדנאות, הרצאות וליווי מקצועי בתחומי טכנולוגיה, AI, דיגיטל וחדשנות — מותאם בדיוק לצוות, לארגון, או לקהל שלכם.
+            </div>
+            <div class="cta-name">Shelly Or Gisser</div>
+            <div class="cta-role">מרצה | יועצת טכנולוגיה | מובילת סדנאות</div>
+            <div class="shelly-links">
+                <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank" class="link-linkedin">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    LinkedIn
+                </a>
+                <a href="https://www.facebook.com/shelly.or.gisser" target="_blank" class="link-facebook">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                </a>
+                <a href="https://www.instagram.com/shelly_or_gisser/" target="_blank" class="link-instagram">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    Instagram
+                </a>
+                <a href="https://purplerosa.github.io/google-tools-directory/" target="_blank" class="link-site">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    כל הכלים
+                </a>
+            </div>
+            <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank" class="cta-contact-btn">
+                דברו איתי לגבי סדנה מותאמת &larr;
+            </a>
+        </div>
+
+        <div class="nav-row" style="justify-content:center; margin-top:32px;">
+            <button class="btn btn-secondary" onclick="resetAll()">התחל מחדש</button>
+        </div>
+
+        <div class="page-footer">
+            <div>&copy; 2026 Shelly Or Gisser &mdash; כל הזכויות שמורות</div>
+            <div class="footer-links">
+                <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank">LinkedIn</a>
+                <a href="https://www.facebook.com/shelly.or.gisser" target="_blank">Facebook</a>
+                <a href="https://www.instagram.com/shelly_or_gisser/" target="_blank">Instagram</a>
+                <a href="https://purplerosa.github.io/google-tools-directory/" target="_blank">Google Tools Directory</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const answers = { goals: [], role: null, budget: null, israel: null, level: null };
+
+const GOALS = [
+    { id: "data", icon: "📊", label: "ניתוח נתונים ודשבורדים", desc: "Sheets, BigQuery, Looker Studio" },
+    { id: "marketing", icon: "📢", label: "שיווק ופרסום", desc: "Google Ads, Analytics, Trends" },
+    { id: "content", icon: "🎨", label: "יצירת תוכן", desc: "Docs, Vids, YouTube, Imagen" },
+    { id: "dev", icon: "💻", label: "פיתוח תוכנה", desc: "Android Studio, Firebase, Cloud" },
+    { id: "collab", icon: "🤝", label: "שיתוף פעולה ופרודוקטיביות", desc: "Workspace, Meet, Drive" },
+    { id: "ai", icon: "🤖", label: "AI ולמידת מכונה", desc: "Gemini, Vertex AI, NotebookLM" },
+    { id: "edu", icon: "🎓", label: "חינוך והדרכה", desc: "Classroom, Scholar, Colab" },
+    { id: "security", icon: "🔒", label: "אבטחה ו-IT", desc: "VirusTotal, Chronicle, Admin" }
+];
+const ROLES = [
+    { id: "freelancer", icon: "🧑‍💼", label: "פרילנסר / עסק קטן", desc: "עצמאי או עסק עד 10 אנשים" },
+    { id: "enterprise", icon: "🏢", label: "ארגון / חברה", desc: "צוותים גדולים, צרכים מורכבים" },
+    { id: "student", icon: "🎓", label: "סטודנט / מרצה", desc: "לימוד, מחקר, הוראה" },
+    { id: "developer", icon: "👨‍💻", label: "מפתח / מהנדס", desc: "פיתוח, DevOps, ענן" },
+    { id: "marketer", icon: "📈", label: "איש שיווק", desc: "קמפיינים, אנליטיקס, SEO" },
+    { id: "creator", icon: "✨", label: "יוצר תוכן", desc: "וידאו, עיצוב, כתיבה" }
+];
+const BUDGETS = [
+    { id: "free", icon: "🆓", label: "חינם בלבד", desc: "רק כלים ללא עלות" },
+    { id: "freemium", icon: "💎", label: "חינם + שדרוגים", desc: "גם כלים עם גרסה חינמית" },
+    { id: "paid", icon: "💳", label: "בתשלום בלבד", desc: "כלים פרימיום בתשלום" },
+    { id: "any", icon: "🌟", label: "הכל — תראו לי את כולם", desc: "כל הכלים, לא משנה המחיר" }
+];
+const ISRAEL_OPTS = [
+    { id: "yes", icon: "🇮🇱", label: "כן, חייב בישראל", desc: "רק כלים שעובדים בישראל" },
+    { id: "no", icon: "🌍", label: "לא משנה", desc: "הצג את כל הכלים" }
+];
+const LEVELS = [
+    { id: "beginner", icon: "🟢", label: "מתחיל", desc: "פשוט ואינטואיטיבי" },
+    { id: "intermediate", icon: "🟡", label: "בינוני", desc: "ידע טכני בסיסי" },
+    { id: "advanced", icon: "🔴", label: "מתקדם", desc: "יכולות טכניות מלאות" }
+];
+
+const TOOLS = [
+    { name:"Google Sheets", desc:"גיליון אלקטרוני חכם עם AI, פיבוט טבלאות, וחיבור למקורות נתונים.", url:"sheets.google.com", price:"Free", priceType:"free", goals:["data","collab"], roles:["freelancer","enterprise","student","marketer"], level:["beginner","intermediate"], israel:true, priority:9 },
+    { name:"Looker Studio", desc:"בניית דשבורדים אינטראקטיביים עם חיבור לכל מקור נתונים.", url:"lookerstudio.google.com", price:"Free", priceType:"free", goals:["data","marketing"], roles:["marketer","enterprise","freelancer"], level:["intermediate","advanced"], israel:true, priority:9 },
+    { name:"BigQuery", desc:"מנוע ניתוח נתונים בענן בסקלה של פטהבייטים — SQL, ML מובנה, וניתוח real-time.", url:"cloud.google.com/bigquery", price:"Pay per query", priceType:"paid", goals:["data","ai"], roles:["developer","enterprise"], level:["advanced"], israel:true, priority:8 },
+    { name:"Google Analytics", desc:"מעקב וניתוח תנועה באתרים ואפליקציות — GA4 עם AI insights.", url:"analytics.google.com", price:"Free / 360", priceType:"freemium", goals:["data","marketing"], roles:["marketer","freelancer","enterprise"], level:["intermediate"], israel:true, priority:9 },
+    { name:"Google Forms", desc:"יצירת סקרים, טפסים ומבחנים עם ניתוח תשובות אוטומטי.", url:"forms.google.com", price:"Free", priceType:"free", goals:["data","edu","collab"], roles:["freelancer","student","enterprise"], level:["beginner"], israel:true, priority:7 },
+    { name:"Looker", desc:"פלטפורמת BI ארגונית לניתוח נתונים מעמיק עם מודלים סמנטיים.", url:"cloud.google.com/looker", price:"Enterprise", priceType:"paid", goals:["data"], roles:["enterprise"], level:["advanced"], israel:true, priority:6 },
+    { name:"Google Ads", desc:"פרסום ממומן בחיפוש, YouTube, Display ו-Shopping — עם AI לביצועים.", url:"ads.google.com", price:"Pay per click", priceType:"paid", goals:["marketing"], roles:["marketer","freelancer","enterprise"], level:["intermediate","advanced"], israel:true, priority:10 },
+    { name:"Search Console", desc:"ניטור ואופטימיזציה של הנוכחות שלך בחיפוש Google — SEO, אינדוקס ודוחות.", url:"search.google.com/search-console", price:"Free", priceType:"free", goals:["marketing"], roles:["marketer","developer","freelancer"], level:["intermediate"], israel:true, priority:9 },
+    { name:"Google Trends", desc:"ניתוח טרנדים של חיפושים בזמן אמת — מחקר שוק, תוכן ו-SEO.", url:"trends.google.com", price:"Free", priceType:"free", goals:["marketing","content"], roles:["marketer","creator","freelancer"], level:["beginner"], israel:true, priority:8 },
+    { name:"Google Business Profile", desc:"ניהול הפרופיל העסקי שלך ב-Google Search ו-Maps.", url:"business.google.com", price:"Free", priceType:"free", goals:["marketing"], roles:["freelancer","enterprise"], level:["beginner"], israel:true, priority:9 },
+    { name:"Google Tag Manager", desc:"ניהול תגי מעקב וקודים באתר ללא צורך במפתח.", url:"tagmanager.google.com", price:"Free", priceType:"free", goals:["marketing","data"], roles:["marketer","developer"], level:["intermediate"], israel:true, priority:7 },
+    { name:"Campaign Manager 360", desc:"ניהול קמפיינים דיגיטליים מרכזי — ad serving, מדידה ודוחות.", url:"marketingplatform.google.com", price:"Enterprise", priceType:"paid", goals:["marketing"], roles:["enterprise","marketer"], level:["advanced"], israel:true, priority:5 },
+    { name:"Google Docs", desc:"מסמכים שיתופיים עם Gemini AI — כתיבה, עריכה ותרגום חכם.", url:"docs.google.com", price:"Free", priceType:"free", goals:["content","collab","edu"], roles:["freelancer","student","enterprise","creator"], level:["beginner"], israel:true, priority:9 },
+    { name:"Google Slides", desc:"מצגות שיתופיות עם Gemini AI — יצירה אוטומטית של שקפים מטקסט.", url:"slides.google.com", price:"Free", priceType:"free", goals:["content","collab","edu"], roles:["freelancer","student","enterprise","creator"], level:["beginner"], israel:true, priority:8 },
+    { name:"Google Vids", desc:"כלי AI ליצירת סרטונים מקצועיים מטקסט — סטוריבורד, עריכה ו-voiceover.", url:"workspace.google.com/products/vids", price:"Workspace", priceType:"freemium", goals:["content"], roles:["creator","marketer","freelancer"], level:["beginner","intermediate"], israel:true, priority:7 },
+    { name:"YouTube Studio", desc:"ניהול ערוץ YouTube — העלאת סרטונים, אנליטיקס, מוניטיזציה ו-AI.", url:"studio.youtube.com", price:"Free", priceType:"free", goals:["content","marketing"], roles:["creator","marketer","freelancer"], level:["intermediate"], israel:true, priority:8 },
+    { name:"Imagen", desc:"מודל AI ליצירת תמונות מטקסט — פוטוריאליזם, עריכה ו-inpainting.", url:"cloud.google.com/vertex-ai", price:"Pay per image", priceType:"paid", goals:["content","ai"], roles:["creator","developer","marketer"], level:["intermediate"], israel:true, priority:7 },
+    { name:"NotebookLM", desc:"עוזר מחקר AI שמנתח מסמכים, PDFs ולינקים — סיכומים, שאלות ו-Audio Overview.", url:"notebooklm.google.com", price:"Free", priceType:"free", goals:["content","ai","edu","data"], roles:["student","creator","freelancer","enterprise"], level:["beginner","intermediate"], israel:true, priority:9 },
+    { name:"MusicFX", desc:"יצירת מוזיקה מטקסט באמצעות AI — לסרטונים, פודקאסטים ויצירה.", url:"aitestkitchen.withgoogle.com/tools/music-fx", price:"Free", priceType:"free", goals:["content"], roles:["creator"], level:["beginner"], israel:false, priority:5 },
+    { name:"Android Studio", desc:"ה-IDE הרשמי לפיתוח Android עם Gemini AI — השלמת קוד, דיבאג חכם.", url:"developer.android.com/studio", price:"Free", priceType:"free", goals:["dev"], roles:["developer"], level:["advanced"], israel:true, priority:8 },
+    { name:"Firebase", desc:"פלטפורמת פיתוח מלאה — אותנטיקציה, DB בזמן אמת, hosting ו-analytics.", url:"firebase.google.com", price:"Free / Pay as you go", priceType:"freemium", goals:["dev"], roles:["developer","freelancer"], level:["intermediate","advanced"], israel:true, priority:9 },
+    { name:"Google Cloud Platform", desc:"תשתית ענן מלאה — Compute, Storage, Kubernetes, AI APIs ועוד 200+ שירותים.", url:"cloud.google.com", price:"Pay as you go", priceType:"paid", goals:["dev","ai","data","security"], roles:["developer","enterprise"], level:["advanced"], israel:true, priority:9 },
+    { name:"Flutter", desc:"SDK ליצירת אפליקציות native ל-iOS, Android, Web ו-Desktop מקוד אחד.", url:"flutter.dev", price:"Free", priceType:"free", goals:["dev"], roles:["developer"], level:["intermediate","advanced"], israel:true, priority:7 },
+    { name:"Project IDX", desc:"סביבת פיתוח בענן עם AI — תמיכה ב-Flutter, Angular, React, Python ועוד.", url:"idx.dev", price:"Free", priceType:"free", goals:["dev"], roles:["developer","student"], level:["intermediate"], israel:true, priority:6 },
+    { name:"Google Colab", desc:"Jupyter Notebooks בענן עם GPU/TPU חינם — אידיאלי ל-ML ו-data science.", url:"colab.research.google.com", price:"Free / Pro", priceType:"freemium", goals:["dev","ai","data","edu"], roles:["developer","student"], level:["intermediate","advanced"], israel:true, priority:8 },
+    { name:"Apps Script", desc:"סקריפטים לאוטומציה של Google Workspace — Sheets, Docs, Gmail ועוד.", url:"script.google.com", price:"Free", priceType:"free", goals:["dev","collab"], roles:["developer","freelancer"], level:["intermediate"], israel:true, priority:6 },
+    { name:"Google Workspace", desc:"חבילה שלמה — Gmail, Drive, Docs, Sheets, Meet, Chat עם Gemini AI.", url:"workspace.google.com", price:"$7/user/mo", priceType:"paid", goals:["collab","content"], roles:["enterprise","freelancer"], level:["beginner"], israel:true, priority:10 },
+    { name:"Google Meet", desc:"שיחות וידאו עם AI — סיכום אוטומטי, תרגום כתוביות ורקעים חכמים.", url:"meet.google.com", price:"Free / Workspace", priceType:"freemium", goals:["collab"], roles:["freelancer","enterprise","student"], level:["beginner"], israel:true, priority:8 },
+    { name:"Google Drive", desc:"אחסון ענן עם AI — חיפוש חכם, שיתוף, וסנכרון אוטומטי.", url:"drive.google.com", price:"15GB Free / Plans", priceType:"freemium", goals:["collab"], roles:["freelancer","enterprise","student","creator"], level:["beginner"], israel:true, priority:9 },
+    { name:"Google Calendar", desc:"יומן חכם עם AI scheduling — תזמון פגישות אוטומטי, תזכורות, ושיתוף.", url:"calendar.google.com", price:"Free", priceType:"free", goals:["collab"], roles:["freelancer","enterprise","student"], level:["beginner"], israel:true, priority:8 },
+    { name:"Google Chat", desc:"מסרים מיידיים לצוותים — Spaces, שיתוף קבצים, ואינטגרציה עם Workspace.", url:"chat.google.com", price:"Free / Workspace", priceType:"freemium", goals:["collab"], roles:["enterprise","freelancer"], level:["beginner"], israel:true, priority:6 },
+    { name:"Gemini", desc:"העוזר האישי של Google — שיחה, ניתוח תמונות, כתיבת קוד, סיכום מסמכים ויצירת תוכן.", url:"gemini.google.com", price:"Free / Advanced", priceType:"freemium", goals:["ai","content","data"], roles:["freelancer","enterprise","student","creator","marketer","developer"], level:["beginner","intermediate"], israel:true, priority:10 },
+    { name:"Vertex AI", desc:"פלטפורמת ML/AI ארגונית — אימון מודלים, Gemini API, פיינטיונינג, RAG ו-Agent Builder.", url:"cloud.google.com/vertex-ai", price:"Pay as you go", priceType:"paid", goals:["ai","dev"], roles:["developer","enterprise"], level:["advanced"], israel:true, priority:8 },
+    { name:"AI Studio", desc:"סביבת ניסוי ופיתוח פרומפטים עם Gemini — חינם, ישירות בדפדפן.", url:"aistudio.google.com", price:"Free", priceType:"free", goals:["ai","dev"], roles:["developer","student","creator"], level:["intermediate"], israel:true, priority:8 },
+    { name:"TensorFlow", desc:"ספריית ML/Deep Learning מובילה — אימון מודלים, פריסה ב-production.", url:"tensorflow.org", price:"Free", priceType:"free", goals:["ai","dev"], roles:["developer"], level:["advanced"], israel:true, priority:6 },
+    { name:"Google AI Edge", desc:"הרצת מודלי AI על מכשירים — MediaPipe, TFLite, והטמעה offline.", url:"ai.google.dev/edge", price:"Free", priceType:"free", goals:["ai","dev"], roles:["developer"], level:["advanced"], israel:true, priority:5 },
+    { name:"Google Classroom", desc:"ניהול כיתות ושיעורים — מטלות, ציונים, משוב ותקשורת עם תלמידים.", url:"classroom.google.com", price:"Free", priceType:"free", goals:["edu"], roles:["student","enterprise"], level:["beginner"], israel:true, priority:8 },
+    { name:"Google Scholar", desc:"חיפוש מאמרים אקדמיים, מחקרים, ספרים וציטוטים ממקורות מדעיים.", url:"scholar.google.com", price:"Free", priceType:"free", goals:["edu","data"], roles:["student"], level:["beginner"], israel:true, priority:7 },
+    { name:"Google Arts & Culture", desc:"חקירת אמנות, תרבות ומוזיאונים מהעולם — VR, סיורים, וניתוח AI.", url:"artsandculture.google.com", price:"Free", priceType:"free", goals:["edu","content"], roles:["student","creator"], level:["beginner"], israel:true, priority:5 },
+    { name:"Assignments", desc:"כלי להגשה ובדיקת מטלות אקדמיות עם בדיקת מקוריות מובנית.", url:"assignments.google.com", price:"Free", priceType:"free", goals:["edu"], roles:["student"], level:["beginner"], israel:true, priority:5 },
+    { name:"VirusTotal", desc:"סריקת קבצים, URLs ו-IP לזיהוי מזיקים — מנוע אבטחה גלובלי.", url:"virustotal.com", price:"Free / Premium", priceType:"freemium", goals:["security"], roles:["developer","enterprise"], level:["intermediate"], israel:true, priority:7 },
+    { name:"Chronicle Security", desc:"פלטפורמת SIEM מבוססת AI לניתוח איומי סייבר בסקלה ארגונית.", url:"cloud.google.com/chronicle", price:"Enterprise", priceType:"paid", goals:["security"], roles:["enterprise"], level:["advanced"], israel:true, priority:6 },
+    { name:"reCAPTCHA", desc:"הגנה על אתרים מבוטים ו-spam — אימות משתמשים חכם ושקוף.", url:"cloud.google.com/recaptcha", price:"Free / Enterprise", priceType:"freemium", goals:["security","dev"], roles:["developer","enterprise"], level:["intermediate"], israel:true, priority:6 },
+    { name:"Google Admin Console", desc:"ניהול מרכזי של Workspace — משתמשים, מכשירים, אבטחה והרשאות.", url:"admin.google.com", price:"Workspace", priceType:"paid", goals:["security","collab"], roles:["enterprise"], level:["intermediate","advanced"], israel:true, priority:6 },
+];
+
+const WORKSHOPS = {
+    "data+freelancer": { title:"סדנת Data Studio לעצמאיים (3 שעות)", desc:"איך לבנות דשבורדים מקצועיים ללקוחות עם Sheets ו-Looker Studio", agenda:["פתיחה: למה דשבורד ולא אקסל (20 דק')","Hands-on: בניית דשבורד מ-Sheets (60 דק')","חיבור Google Analytics (40 דק')","עיצוב ושיתוף עם לקוח (40 דק')","סיכום ו-Q&A (20 דק')"] },
+    "data+enterprise": { title:"סדנת Data Analytics עם Google Cloud (יום שלם)", desc:"מ-BigQuery ועד Looker — pipeline מלא של ניתוח נתונים ארגוני", agenda:["סקירה: אקוסיסטם הנתונים של Google (30 דק')","BigQuery: שאילתות, ML, ואופטימיזציה (90 דק')","Looker Studio: דשבורדים ארגוניים (60 דק')","Vertex AI: חיזויים מנתונים (60 דק')","Best Practices וארכיטקטורה (30 דק')"] },
+    "marketing+freelancer": { title:"סדנת שיווק דיגיטלי לעסקים קטנים (3 שעות)", desc:"Google Ads, Analytics, ו-Business Profile — הכל מה שצריך להתחיל", agenda:["הקמת Google Business Profile (30 דק')","Google Ads: קמפיין ראשון (60 דק')","Google Analytics: מה למדוד (40 דק')","Search Console: SEO בסיסי (30 דק')","תכנון תקציב ו-Q&A (20 דק')"] },
+    "marketing+enterprise": { title:"סדנת Marketing Stack לארגונים (יום שלם)", desc:"Campaign Manager 360, Analytics 360, ו-Looker Studio — ברמה ארגונית", agenda:["סקירת Marketing Platform (30 דק')","Campaign Manager 360 (60 דק')","GA4 Advanced: Audiences ו-Conversions (60 דק')","Looker Studio: דוחות שיווק (60 דק')","אינטגרציה ותיעדוף (30 דק')"] },
+    "marketing+marketer": { title:"סדנת Google Ads למשווקים (3 שעות)", desc:"קמפיינים מתקדמים, אופטימיזציה עם AI, ומדידת ROI", agenda:["מבנה חשבון ואסטרטגיה (30 דק')","Performance Max ו-Smart Bidding (50 דק')","Audiences ו-Remarketing (40 דק')","GA4: Attribution ו-Conversions (40 דק')","טיפים מתקדמים ו-Q&A (20 דק')"] },
+    "ai+freelancer": { title:"סדנת AI לעצמאיים (3 שעות)", desc:"Gemini, NotebookLM ו-AI Studio — כלים שחוסכים שעות עבודה", agenda:["מבוא: מה AI יכול לעשות לך (20 דק')","Hands-on: Gemini ליצירת תוכן (40 דק')","NotebookLM: מחקר וסיכום חכם (40 דק')","AI Studio: פרומפטים מתקדמים (40 דק')","Use cases ופרקטיקות (20 דק')"] },
+    "ai+enterprise": { title:"סדנת AI ארגוני עם Google Cloud (יום שלם)", desc:"Vertex AI, Gemini API, ו-RAG — בניית פתרונות AI בארגון", agenda:["סקירת AI Ecosystem של Google (30 דק')","Vertex AI: אימון ופריסת מודלים (90 דק')","Gemini API: אינטגרציה במוצר (60 דק')","RAG ו-Agent Builder (60 דק')","אבטחה ו-Governance (30 דק')"] },
+    "ai+student": { title:"סדנת AI למחקר אקדמי (3 שעות)", desc:"NotebookLM, Colab, ו-Gemini — כלים שמשנים את חוויית הלימוד", agenda:["מבוא: AI בעולם האקדמי (20 דק')","NotebookLM: סיכום מאמרים ב-AI (40 דק')","Google Colab: ניתוח נתונים ב-Python (50 דק')","Gemini: כתיבה ומחקר (30 דק')","אתיקה ב-AI אקדמי (20 דק')"] },
+    "ai+developer": { title:"סדנת Gemini API למפתחים (3 שעות)", desc:"אינטגרציה של AI במוצר — מ-prompt ועד production", agenda:["Gemini API: מודלים ויכולות (30 דק')","AI Studio: בניית פרומפטים (40 דק')","Hands-on: שילוב ב-App (50 דק')","Function Calling ו-RAG (40 דק')","Best Practices ו-Q&A (20 דק')"] },
+    "content+creator": { title:"סדנת יצירת תוכן עם AI (3 שעות)", desc:"מ-Gemini ועד YouTube — כלים חינמיים ליצירת תוכן מקצועי", agenda:["Gemini: רעיונות ותסריטים (30 דק')","Google Vids: סרטונים מטקסט (40 דק')","YouTube Studio: אופטימיזציה ו-Analytics (40 דק')","NotebookLM: Audio Overview (30 דק')","Workflow שלם: מרעיון לפרסום (20 דק')"] },
+    "dev+developer": { title:"סדנת Full-Stack עם Google Cloud ו-Firebase (יום שלם)", desc:"מפיתוח ועד פריסה — כל הכלים למפתחים", agenda:["IDX: סביבת פיתוח בענן (30 דק')","Firebase: Auth, DB, ו-Hosting (90 דק')","Cloud Functions ו-Cloud Run (60 דק')","Gemini API: AI באפליקציה (60 דק')","CI/CD ו-Best Practices (30 דק')"] },
+    "collab+enterprise": { title:"סדנת Google Workspace לארגונים (3 שעות)", desc:"הטמעת Workspace עם Gemini AI — פרודוקטיביות ברמה אחרת", agenda:["סקירת Workspace + Gemini (20 דק')","Gmail ו-Docs עם AI (40 דק')","Sheets: ניתוח נתונים חכם (40 דק')","Meet: פגישות עם סיכום AI (30 דק')","Admin Console ואבטחה (30 דק')"] },
+    "collab+freelancer": { title:"סדנת Workspace לעצמאיים (2 שעות)", desc:"איך לנהל את העסק עם Google — מייל, יומן, דרייב וניהול לקוחות", agenda:["Gmail: טיפים ו-AI (25 דק')","Drive: ארגון וסדר (25 דק')","Calendar: תזמון חכם (20 דק')","Sheets: ניהול לקוחות (25 דק')","טיפים ו-Q&A (15 דק')"] },
+    "security+enterprise": { title:"סדנת אבטחת סייבר עם Google (חצי יום)", desc:"Chronicle, VirusTotal ו-Workspace Security — הגנה ברמה ארגונית", agenda:["נוף האיומים 2026 (20 דק')","Chronicle Security: SIEM מבוסס AI (50 דק')","VirusTotal: Threat Intelligence (40 דק')","Workspace Security Best Practices (40 דק')","Incident Response ו-Q&A (30 דק')"] },
+    "edu+student": { title:"סדנת כלים דיגיטליים למרצים ומורים (3 שעות)", desc:"Classroom, Forms, Slides ו-AI — כלים שמשדרגים את ההוראה", agenda:["Google Classroom: ניהול כיתה (40 דק')","Forms: מבחנים וסקרים (30 דק')","Slides + Gemini: מצגות חכמות (30 דק')","NotebookLM: מחקר ולמידה (30 דק')","טיפים ו-Q&A (20 דק')"] },
+};
+
+function renderOptions(containerId, options, multi=false, answerKey) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = options.map(o => `
+        <div class="option-card" data-id="${o.id}" onclick="selectOption('${containerId}','${o.id}',${multi},'${answerKey}')">
+            <div class="check"></div>
+            <div class="icon">${o.icon}</div>
+            <div class="label">${o.label}</div>
+            <div class="desc">${o.desc}</div>
+        </div>
+    `).join('');
+}
+
+function selectOption(containerId, id, multi, answerKey) {
+    const container = document.getElementById(containerId);
+    const cards = container.querySelectorAll('.option-card');
+    if (multi) {
+        const card = container.querySelector(`[data-id="${id}"]`);
+        card.classList.toggle('selected');
+        answers[answerKey] = [...container.querySelectorAll('.option-card.selected')].map(c => c.dataset.id);
+    } else {
+        cards.forEach(c => c.classList.remove('selected'));
+        container.querySelector(`[data-id="${id}"]`).classList.add('selected');
+        answers[answerKey] = id;
+    }
+    const stepNum = containerId === 'goals-options' ? 1 : containerId === 'role-options' ? 2 : containerId === 'budget-options' ? 3 : containerId === 'israel-options' ? 4 : 5;
+    const btn = document.getElementById(`btn-step${stepNum}`);
+    if (multi) { btn.disabled = answers[answerKey].length === 0; }
+    else { btn.disabled = !answers[answerKey]; }
+}
+
+let currentStep = 0;
+function goToStep(n) {
+    const curEl = document.getElementById(typeof currentStep === 'number' ? `step-${currentStep}` : `step-${currentStep}`);
+    if (curEl) curEl.classList.remove('active');
+    setTimeout(() => {
+        currentStep = n;
+        document.getElementById(typeof n === 'number' ? `step-${n}` : `step-${n}`).classList.add('active');
+        const progress = n === 'results' ? 100 : (n / 6) * 100;
+        document.getElementById('progressFill').style.width = `${progress}%`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+}
+
+function showResults() {
+    const scored = TOOLS.map(tool => {
+        let score = 0;
+        const goalMatch = answers.goals.filter(g => tool.goals.includes(g)).length;
+        score += goalMatch * 30;
+        if (tool.roles.includes(answers.role)) score += 20;
+        if (answers.budget === 'free' && tool.priceType !== 'free') score -= 50;
+        if (answers.budget === 'freemium' && tool.priceType === 'paid') score -= 10;
+        if (answers.budget === 'paid' && tool.priceType === 'free') score -= 5;
+        if (answers.israel === 'yes' && !tool.israel) score -= 100;
+        if (tool.level.includes(answers.level)) score += 15;
+        if (answers.level === 'beginner' && !tool.level.includes('beginner')) score -= 10;
+        score += tool.priority;
+        return { ...tool, score };
+    }).filter(t => t.score > 0).sort((a, b) => b.score - a.score).slice(0, 10);
+
+    const goalLabels = { data:"ניתוח נתונים", marketing:"שיווק", content:"תוכן", dev:"פיתוח", collab:"שיתוף פעולה", ai:"AI", edu:"חינוך", security:"אבטחה" };
+    const roleLabels = { freelancer:"עצמאי/עסק קטן", enterprise:"ארגון", student:"סטודנט/מרצה", developer:"מפתח", marketer:"שיווק", creator:"יוצר תוכן" };
+    const levelLabels = { beginner:"מתחיל", intermediate:"בינוני", advanced:"מתקדם" };
+    const budgetLabels = { free:"חינם בלבד", freemium:"חינם + שדרוגים", paid:"בתשלום", any:"כל הכלים" };
+
+    document.getElementById('resultsSummary').innerHTML =
+        answers.goals.map(g => `<span class="summary-tag">${goalLabels[g]}</span>`).join('') +
+        `<span class="summary-tag">${roleLabels[answers.role]}</span>` +
+        `<span class="summary-tag">${levelLabels[answers.level]}</span>` +
+        `<span class="summary-tag">${budgetLabels[answers.budget]}</span>` +
+        (answers.israel === 'yes' ? '<span class="summary-tag">🇮🇱 ישראל</span>' : '');
+
+    document.getElementById('toolResults').innerHTML = scored.map((t, i) => {
+        const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+        const priceTag = t.priceType === 'free' ? 'tag-free' : t.priceType === 'freemium' ? 'tag-freemium' : 'tag-paid';
+        const whyParts = [];
+        const matched = answers.goals.filter(g => t.goals.includes(g)).map(g => goalLabels[g]);
+        if (matched.length) whyParts.push(`מתאים ל: ${matched.join(', ')}`);
+        if (t.roles.includes(answers.role)) whyParts.push(`מותאם ל${roleLabels[answers.role]}`);
+        if (!t.israel) whyParts.push('⚠️ לא זמין בישראל');
+        return `
+        <div class="result-card">
+            <div class="result-rank ${rankClass}">${i + 1}</div>
+            <div class="result-info">
+                <div class="result-name">${t.name}</div>
+                <div class="result-desc">${t.desc}</div>
+                <div class="result-why">${whyParts.join(' · ')}</div>
+                <div class="result-meta">
+                    <span class="result-tag ${priceTag}">${t.price}</span>
+                    ${!t.israel ? '<span class="result-tag tag-no-israel">לא בישראל</span>' : ''}
+                    <a href="https://${t.url}" target="_blank" class="result-link">${t.url} ←</a>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    const workshopKey = `${answers.goals[0]}+${answers.role}`;
+    const fallbackKey = Object.keys(WORKSHOPS).find(k => k.startsWith(answers.goals[0])) || Object.keys(WORKSHOPS)[0];
+    const ws = WORKSHOPS[workshopKey] || WORKSHOPS[fallbackKey];
+    document.getElementById('workshopBox').innerHTML = `
+        <div class="workshop-title">${ws.title}</div>
+        <div class="workshop-desc">${ws.desc}</div>
+        <ul class="workshop-agenda">${ws.agenda.map(a => `<li>${a}</li>`).join('')}</ul>
+    `;
+
+    goToStep('results');
+}
+
+function resetAll() {
+    answers.goals = []; answers.role = null; answers.budget = null; answers.israel = null; answers.level = null;
+    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    ['btn-step1','btn-step2','btn-step3','btn-step4','btn-step5'].forEach(id => document.getElementById(id).disabled = true);
+    goToStep(0);
+}
+
+renderOptions('goals-options', GOALS, true, 'goals');
+renderOptions('role-options', ROLES, false, 'role');
+renderOptions('budget-options', BUDGETS, false, 'budget');
+renderOptions('israel-options', ISRAEL_OPTS, false, 'israel');
+renderOptions('level-options', LEVELS, false, 'level');
+</script>
+</body>
+</html>
