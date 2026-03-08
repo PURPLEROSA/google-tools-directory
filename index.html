@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Tools Directory | By Shelly Or Gisser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #050505;
+            --bg-secondary: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --text-primary: #F0F0F0;
+            --text-secondary: #A0A0A0;
+            --text-muted: #606060;
+            --accent-blue: #96e6ff;
+            --accent-red: #ffb7b7;
+            --accent-yellow: #ffd8be;
+            --accent-green: #b4ffda;
+            --holo-purple: #c3a6ff;
+            --gradient: linear-gradient(135deg, #ffb7b7 0%, #e1b7ff 25%, #96e6ff 50%, #b4ffda 75%, #ffd8be 100%);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            --tag-bg: rgba(195, 166, 255, 0.08);
+            --search-bg: rgba(255, 255, 255, 0.03);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* HOLOGRAPHIC BACKGROUND */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            filter: blur(100px);
+            opacity: 0.22;
+        }
+        .blob {
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            animation: blobMove 25s infinite alternate ease-in-out;
+        }
+        .blob-1 { background: var(--accent-red); top: -10%; left: -10%; }
+        .blob-2 { background: var(--holo-purple); bottom: -10%; right: -10%; animation-delay: -5s; }
+        .blob-3 { background: var(--accent-blue); top: 40%; right: 20%; animation-delay: -10s; }
+        .blob-4 { background: var(--accent-yellow); bottom: 20%; left: 10%; animation-delay: -15s; }
+        @keyframes blobMove {
+            from { transform: translate(0, 0) rotate(0deg) scale(1); }
+            to { transform: translate(150px, 100px) rotate(30deg) scale(1.3); }
+        }
+
+        /* HERO */
+        .hero {
+            position: relative;
+            padding: 80px 24px 60px;
+            text-align: center;
+            overflow: hidden;
+            background: linear-gradient(180deg, #08080f 0%, var(--bg-primary) 100%);
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px; left: 50%; transform: translateX(-50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(195,166,255,0.06) 0%, rgba(150,230,255,0.04) 40%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(66,133,244,0.1); border: 1px solid rgba(66,133,244,0.2);
+            padding: 6px 16px; border-radius: 100px;
+            font-size: 13px; color: var(--accent-blue);
+            margin-bottom: 24px; font-weight: 500;
+        }
+        .hero-badge .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 700; letter-spacing: -1.5px;
+            margin-bottom: 16px; line-height: 1.1;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 10s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        .hero h1 .g-blue, .hero h1 .g-red, .hero h1 .g-yellow, .hero h1 .g-green {
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 17px; color: var(--text-secondary);
+            max-width: 600px; margin: 0 auto 40px;
+        }
+        .hero .credit {
+            font-size: 13px; color: var(--text-muted);
+            margin-top: 8px;
+        }
+        .hero .credit a { color: var(--accent-blue); text-decoration: none; }
+        .hero .curator-top {
+            font-size: clamp(20px, 3vw, 28px); font-weight: 800;
+            color: #fff; margin-bottom: 12px; letter-spacing: -0.5px;
+        }
+        .hero .curator-top a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
+        .hero .curator-top a:hover { color: var(--accent-yellow); }
+        .social-links { display: flex; justify-content: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+        .social-links a {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 16px; border-radius: 100px;
+            font-size: 14px; font-weight: 600; text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .social-links a:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .social-links .linkedin { background: rgba(150,230,255,0.15); color: #96e6ff; border: 1px solid rgba(150,230,255,0.2); }
+        .social-links .facebook { background: rgba(195,166,255,0.15); color: #c3a6ff; border: 1px solid rgba(195,166,255,0.2); }
+        .social-links .instagram { background: rgba(255,183,183,0.15); color: #ffb7b7; border: 1px solid rgba(255,183,183,0.2); }
+        .footer-social { display: flex; justify-content: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+        .footer-social a {
+            color: var(--accent-blue); text-decoration: none; font-size: 13px;
+            padding: 4px 12px; border-radius: 100px;
+            border: 1px solid rgba(66,133,244,0.3); transition: all 0.2s;
+        }
+        .footer-social a:hover { background: rgba(66,133,244,0.1); }
+
+        /* SEARCH */
+        .search-container {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,10,10,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+        }
+        .search-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+        }
+        .search-box {
+            flex: 1; min-width: 280px; position: relative;
+        }
+        .search-box svg {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            width: 18px; height: 18px; color: var(--text-muted);
+        }
+        .search-box input {
+            width: 100%; padding: 12px 16px 12px 46px;
+            background: var(--search-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; color: var(--text-primary);
+            font-size: 15px; font-family: inherit; outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-box input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66,133,244,0.15);
+        }
+        .search-box input::placeholder { color: var(--text-muted); }
+        .counter {
+            font-size: 13px; color: var(--text-muted);
+            white-space: nowrap; padding: 0 8px;
+        }
+        .counter span { color: var(--accent-blue); font-weight: 600; }
+
+        /* FILTERS */
+        .filters-bar {
+            max-width: 1200px; margin: 0 auto;
+            padding: 16px 24px;
+            display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .filter-chip {
+            padding: 8px 16px; border-radius: 100px;
+            font-size: 13px; font-weight: 500; font-family: inherit;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            color: var(--text-secondary); cursor: pointer;
+            transition: all 0.2s; white-space: nowrap;
+        }
+        .filter-chip:hover {
+            border-color: var(--border-hover); color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+        .filter-chip.active {
+            background: var(--gradient); border-color: rgba(255,255,255,0.2);
+            color: #000; font-weight: 600;
+        }
+        .filter-chip .chip-count {
+            display: inline-block; margin-left: 6px;
+            background: rgba(255,255,255,0.15); padding: 1px 7px;
+            border-radius: 100px; font-size: 11px;
+        }
+        .filter-chip.active .chip-count {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* MAIN CONTENT */
+        .main { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
+
+        /* CATEGORY SECTION */
+        .category-section {
+            margin-bottom: 48px;
+        }
+        .category-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .category-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .category-header h2 {
+            font-size: 20px; font-weight: 600; letter-spacing: -0.3px;
+        }
+        .category-header .cat-count {
+            font-size: 13px; color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        /* TOOL CARDS */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 16px;
+        }
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column;
+            backdrop-filter: blur(15px);
+        }
+        .tool-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        .tool-card-top {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .tool-name {
+            font-size: 17px; font-weight: 600; letter-spacing: -0.2px;
+            color: var(--text-primary);
+        }
+        .tool-link {
+            flex-shrink: 0; margin-left: 12px;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; background: rgba(66,133,244,0.1);
+            color: var(--accent-blue); text-decoration: none;
+            transition: all 0.2s;
+        }
+        .tool-link:hover {
+            background: var(--accent-blue); color: #fff;
+        }
+        .tool-link svg { width: 16px; height: 16px; }
+        .tool-desc {
+            font-size: 14px; color: var(--text-secondary);
+            line-height: 1.6; margin-bottom: 16px; flex-grow: 1;
+        }
+        .tool-features {
+            list-style: none; margin-bottom: 16px;
+        }
+        .tool-features li {
+            font-size: 13px; color: var(--text-secondary);
+            padding: 4px 0 4px 20px; position: relative;
+        }
+        .tool-features li::before {
+            content: ''; position: absolute; left: 0; top: 11px;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent-green);
+        }
+        .tool-meta {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+            padding-top: 16px; border-top: 1px solid var(--border-color);
+        }
+        .price-tag {
+            font-size: 12px; font-weight: 500;
+            padding: 4px 10px; border-radius: 6px;
+        }
+        .price-free { background: rgba(52,168,83,0.12); color: #5cdb7a; }
+        .price-freemium { background: rgba(66,133,244,0.12); color: #79b0f7; }
+        .price-paid { background: rgba(251,188,5,0.12); color: #fbd04d; }
+        .price-included { background: rgba(138,92,246,0.12); color: #b794f4; }
+        .not-israel {
+            font-size: 11px; font-weight: 600;
+            padding: 4px 10px; border-radius: 6px;
+            background: rgba(234,67,53,0.12); color: #f87171;
+        }
+        .tool-url {
+            font-size: 11px; color: var(--text-muted);
+            margin-left: auto; max-width: 180px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+
+        /* NO RESULTS */
+        .no-results {
+            text-align: center; padding: 80px 24px;
+            display: none;
+        }
+        .no-results svg { width: 64px; height: 64px; color: var(--text-muted); margin-bottom: 16px; }
+        .no-results h3 { font-size: 20px; margin-bottom: 8px; }
+        .no-results p { color: var(--text-secondary); font-size: 15px; }
+
+        /* FOOTER */
+        footer {
+            text-align: center; padding: 40px 24px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted); font-size: 13px;
+        }
+        footer a { color: var(--accent-blue); text-decoration: none; }
+        footer .google-colors span { font-weight: 700; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .tools-grid { grid-template-columns: 1fr; }
+            .hero { padding: 60px 20px 40px; }
+            .search-inner { flex-direction: column; }
+            .counter { order: -1; width: 100%; text-align: center; }
+        }
+
+        /* ANIMATIONS */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hidden { display: none !important; }
+
+        /* Back to top */
+        .back-top {
+            position: fixed; bottom: 32px; right: 32px;
+            width: 44px; height: 44px; border-radius: 12px;
+            background: var(--gradient); color: #000;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; border: none; font-size: 20px;
+            box-shadow: 0 4px 20px rgba(150,230,255,0.3);
+            transition: all 0.2s; z-index: 50;
+        }
+        .back-top:hover { transform: translateY(-2px); }
+        .back-top.visible { display: flex; }
+    </style>
+</head>
+<body>
+
+<!-- HOLOGRAPHIC BACKGROUND -->
+<div class="bg-glow">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="curator-top">Created by <strong>Shelly Or Gisser</strong></div>
+    <div class="social-links">
+        <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank" class="linkedin">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+        </a>
+        <a href="https://www.facebook.com/shelly.or.gisser" target="_blank" class="facebook">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+        </a>
+        <a href="https://www.instagram.com/shelly_or_gisser/" target="_blank" class="instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 11-2.882 0 1.441 1.441 0 012.882 0z"/></svg>
+            Instagram
+        </a>
+    </div>
+    <h1>
+        The Complete<br>
+        <span class="g-blue">G</span><span class="g-red">o</span><span class="g-yellow">o</span><span class="g-blue">g</span><span class="g-green">l</span><span class="g-red">e</span>
+        Tools Directory
+    </h1>
+    <p>Every Google tool, app and AI experiment — organized by category with descriptions, pricing and direct links. Your one-stop reference for the Google ecosystem.</p>
+</section>
+
+<!-- SEARCH -->
+<div class="search-container">
+    <div class="search-inner">
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" id="searchInput" placeholder="Search tools by name, feature or keyword..." autocomplete="off">
+        </div>
+        <div class="counter">Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> tools</div>
+    </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters-bar" id="filtersBar">
+    <button class="filter-chip active" data-category="all">All Tools</button>
+</div>
+
+<!-- MAIN -->
+<main class="main" id="mainContent"></main>
+
+<!-- NO RESULTS -->
+<div class="no-results" id="noResults">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
+    <h3>No tools found</h3>
+    <p>Try a different search term or clear the filters.</p>
+</div>
+
+<!-- BACK TO TOP -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</button>
+
+<!-- FOOTER -->
+<footer>
+    <p style="font-size: 20px; font-weight: 700;">
+        <span class="google-colors">
+            <span style="color:var(--accent-blue)">G</span><span style="color:var(--accent-red)">o</span><span style="color:var(--accent-yellow)">o</span><span style="color:var(--accent-blue)">g</span><span style="color:var(--accent-green)">l</span><span style="color:var(--accent-red)">e</span>
+        </span>
+        Tools Directory &mdash; Created by <strong>Shelly Or Gisser</strong> &mdash; 2026
+    </p>
+    <div class="footer-social">
+        <a href="https://www.linkedin.com/in/shelly-or-gisser/" target="_blank">LinkedIn</a>
+        <a href="https://www.facebook.com/shelly.or.gisser" target="_blank">Facebook</a>
+        <a href="https://www.instagram.com/shelly_or_gisser/" target="_blank">Instagram</a>
+    </div>
+    <p style="margin-top:12px; font-size:12px; color:#555;">All product names and logos are trademarks of Google LLC. This is an independent resource and is not affiliated with Google.</p>
+</footer>
+
+<script>
+const TOOLS_DATA = [
+  {
+    category: "Core AI & Assistants",
+    icon: "🧠",
+    color: "#96e6ff",
+    tools: [
+      {
+        name: "Gemini Advanced",
+        desc: "Google's most powerful AI chatbot (Ultra/Pro models) for writing, code generation, document analysis and deep reasoning. Premium-only via Google One AI Premium subscription.",
+        features: ["Multi-modal: text, images, code, files","Deep thinking & reasoning mode","Document & data analysis"],
+        price: "$19.99/month (Google One AI Premium)",
+        priceType: "paid",
+        url: "gemini.google.com"
+      },
+      {
+        name: "Google AI Studio",
+        desc: "Developer sandbox for experimenting with AI models, prompt engineering, and obtaining API keys.",
+        features: ["Test Gemini models directly","Prompt engineering workspace","Free API key generation"],
+        price: "Free (generous) / Pay per use",
+        priceType: "freemium",
+        url: "aistudio.google.com"
+      },
+      {
+        name: "NotebookLM",
+        desc: "AI research tool grounded exclusively in your uploaded sources — document summaries, Q&A, and auto-generated podcasts.",
+        features: ["Source-grounded AI responses","Auto podcast generation","Multi-document analysis"],
+        price: "Free",
+        priceType: "free",
+        url: "notebooklm.google.com"
+      },
+      {
+        name: "Gemini Deep Research",
+        desc: "Autonomous agent that conducts deep internet research and generates comprehensive multi-page reports.",
+        features: ["Autonomous web research","Comprehensive report generation","Dozens of pages per report"],
+        price: "Included in Gemini Advanced",
+        priceType: "included",
+        url: "gemini.google.com"
+      },
+      {
+        name: "Gems",
+        desc: "Create custom Gemini personas with specific instructions and personalities — similar to OpenAI's GPTs.",
+        features: ["Custom AI personas","Specific instructions & personality","Reusable across sessions"],
+        price: "Included in Gemini Advanced",
+        priceType: "included",
+        url: "gemini.google.com"
+      },
+      {
+        name: "Illuminate",
+        desc: "Converts academic papers and technical books into engaging audio conversations (\"learning podcasts\").",
+        features: ["Papers to audio conversion","Learning podcast format","Academic content support"],
+        price: "Free (Labs version)",
+        priceType: "free",
+        url: "illuminate.google.com"
+      },
+      {
+        name: "Google Lens",
+        desc: "Visual search engine — object recognition, sign translation, and homework help through your camera.",
+        features: ["Object & text recognition","Real-time translation","Homework solver"],
+        price: "Free",
+        priceType: "free",
+        url: "lens.google"
+      },
+      {
+        name: "Teachable Machine",
+        desc: "The ultimate tool for understanding how machine learning works. Train a simple AI model (image, sound, or pose) in the browser — zero code required.",
+        features: ["Train ML models in browser","No coding required","Image, sound & pose recognition"],
+        price: "Free",
+        priceType: "free",
+        url: "teachablemachine.withgoogle.com"
+      },
+      {
+        name: "SynthID",
+        desc: "The most strategically important tool for GenAI risk management (by DeepMind). Embeds invisible watermarks in AI-generated images, text, and audio.",
+        features: ["Invisible AI watermarking","Image, text & audio support","Content authenticity verification"],
+        price: "Pay per use — developers only",
+        priceType: "paid",
+        url: "deepmind.google/technologies/synthid/"
+      },
+      {
+        name: "Gemini",
+        desc: "Google's advanced AI chatbot for conversations, content creation, and analysis — the free tier of Google's flagship AI.",
+        features: ["Conversational AI assistant","Content creation & analysis","Free access to Gemini models"],
+        price: "Free",
+        priceType: "free",
+        url: "gemini.google.com"
+      },
+      {
+        name: "NotebookLM Business",
+        desc: "Enterprise version of NotebookLM with expanded source limits, enterprise-grade security, identity management, and team collaboration features.",
+        features: ["Enterprise security & compliance","Identity management (IAM)","Team sharing & collaboration"],
+        price: "Paid (Enterprise)",
+        priceType: "paid",
+        url: "notebooklm.google.com"
+      },
+      {
+        name: "AI Overviews (AIO)",
+        desc: "Google's AI-powered search feature (formerly SGE) — generates comprehensive AI summaries, contextual answers, and follow-up conversations directly within Google Search results.",
+        features: ["AI-generated search summaries","Follow-up conversations","Multi-source synthesis"],
+        price: "Free",
+        priceType: "free",
+        url: "google.com/search"
+      }
+    ]
+  },
+  {
+    category: "Visual Creation Studio",
+    icon: "🎨",
+    color: "#ffb7b7",
+    tools: [
+      {
+        name: "Gemini Image Generation (Nano Banana 2)",
+        desc: "Google's latest image generation model (Gemini 3 Flash Image). AI image creation with character consistency across images and Photoshop-like editing capabilities. Replaces all previous Nano Banana versions.",
+        features: ["Character consistency","Image editing & retouching","Gemini 3 Flash Image model"],
+        price: "Free (limited)",
+        priceType: "free",
+        url: "gemini.google.com"
+      },
+      {
+        name: "VEO 3.1",
+        desc: "Google's best video generation model — produces realistic videos with sound, music, speech, and more.",
+        features: ["Realistic video generation","Auto sound & music","Speech synthesis"],
+        price: "Subscribers only",
+        priceType: "paid",
+        url: "gemini.google.com"
+      },
+      {
+        name: "Google Arts & Culture",
+        desc: "Virtual museum tours, cultural games, and art experiments powered by AI.",
+        features: ["Virtual museum tours","AI art experiments","Cultural exploration games"],
+        price: "Free",
+        priceType: "free",
+        url: "artsandculture.google.com"
+      },
+      {
+        name: "Google Vids",
+        desc: "AI-powered video editor for organizations — automatically creates presentation videos from documents.",
+        features: ["Document to video conversion","Auto presentation creation","Enterprise collaboration"],
+        price: "Included in Business Workspace",
+        priceType: "included",
+        url: "workspace.google.com/products/vids"
+      },
+      {
+        name: "Google Flow",
+        desc: "Cinematic & artistic video creation tool (powered by Veo) with camera movement and physics control.",
+        features: ["Cinematic video creation","Camera movement control","Physics simulation"],
+        price: "Labs / Ultra subscription",
+        priceType: "paid",
+        url: "https://labs.google/fx/tools/flow",
+        notInIsrael: true
+      },
+      {
+        name: "Google Whisk",
+        desc: "Image mixing tool — combine style from one image, character from another, and background from a third to create something new.",
+        features: ["Multi-image style mixing","Character + background blending","Creative image mashups"],
+        price: "Free (Labs)",
+        priceType: "free",
+        url: "https://labs.google/fx/tools/whisk"
+      },
+      {
+        name: "Pixel Studio",
+        desc: "Creative app for Pixel devices — generate stickers, edit photos, and create visual content quickly.",
+        features: ["AI sticker generation","Quick photo editing","Pixel device exclusive"],
+        price: "Free (limited)",
+        priceType: "free",
+        url: "https://play.google.com/store/apps/details?id=com.google.android.apps.pixel.creativeassistant"
+      },
+      {
+        name: "Google Photos (Magic Editor)",
+        desc: "Magic photo editor — move people, erase objects, and complete backgrounds using AI.",
+        features: ["AI object removal","Person repositioning","Background completion"],
+        price: "Free (limited) / Google One",
+        priceType: "freemium",
+        url: "photos.google.com"
+      },
+      {
+        name: "Google Fonts API",
+        desc: "The world's largest open-source font library for web development and design.",
+        features: ["1,600+ free font families","Easy web integration","Open-source & free"],
+        price: "Free",
+        priceType: "free",
+        url: "fonts.google.com"
+      },
+      {
+        name: "GenType",
+        desc: "Generate a complete custom alphabet (font) made from AI-generated images based on your prompt.",
+        features: ["AI-generated fonts","Prompt-based creation","Full alphabet generation"],
+        price: "Free",
+        priceType: "free",
+        url: "https://labs.google/gentype"
+      },
+      {
+        name: "Say What You See",
+        desc: "Interactive game that teaches image prompting skills by challenging you to describe AI-generated images.",
+        features: ["Learn prompt engineering","Image description challenges","Interactive learning"],
+        price: "Free",
+        priceType: "free",
+        url: "artsandculture.google.com"
+      },
+      {
+        name: "Doppl",
+        desc: "Revolutionary e-commerce app with virtual try-on. Upload your photo and a clothing item — AI generates a dynamic video showing how the fabric falls and moves on your body.",
+        features: ["Virtual clothing try-on","Dynamic video generation","AI fabric simulation"],
+        price: "Free",
+        priceType: "free",
+        url: "labs.google/doppl",
+        notInIsrael: true
+      },
+      {
+        name: "Google Earth Studio",
+        desc: "Professional animation tool using Google Earth satellite and 3D data to create cinematic shots, virtual drone flights, and urban simulations.",
+        features: ["Cinematic Earth animations","Virtual drone flights","3D city simulations"],
+        price: "Free",
+        priceType: "free",
+        url: "google.com/earth/studio"
+      },
+      {
+        name: "Imagen 3",
+        desc: "Google DeepMind's most advanced image generation model — creates photorealistic images with exceptional detail and text rendering.",
+        features: ["Photorealistic image generation","Superior text rendering","DeepMind's latest model"],
+        price: "Via API / Vertex AI",
+        priceType: "paid",
+        url: "deepmind.google"
+      },
+      {
+        name: "ImageFX",
+        desc: "User-friendly image generation tool powered by Imagen — create stunning images from text descriptions with an intuitive interface.",
+        features: ["Text-to-image generation","Intuitive prompt interface","Style & mood controls"],
+        price: "Free",
+        priceType: "free",
+        url: "labs.google/fx"
+      },
+      {
+        name: "Veo 2",
+        desc: "Google DeepMind's advanced video generation model — creates high-quality videos from text and image prompts.",
+        features: ["Text & image to video","High-quality generation","DeepMind powered"],
+        price: "Via API / Labs",
+        priceType: "paid",
+        url: "deepmind.google"
+      },
+      {
+        name: "VideoFX",
+        desc: "AI video creation and editing tool from Google Labs — generate and transform video content with text prompts.",
+        features: ["AI video generation","Text-prompted editing","Google Labs experiment"],
+        price: "Free (Labs)",
+        priceType: "free",
+        url: "labs.google/fx"
+      },
+      {
+        name: "YouTube Create",
+        desc: "Google's professional mobile video editing app (a strategic answer to CapCut). Features advanced AI tools for creators including automatic audio cleanup, beat matching, and auto-captions.",
+        features: ["AI audio cleanup & noise removal","Beat matching & auto-captions","Professional mobile editing"],
+        price: "Free",
+        priceType: "free",
+        url: "youtube.com/create"
+      }
+    ]
+  },
+  {
+    category: "Build & Code",
+    icon: "💻",
+    color: "#ffd8be",
+    tools: [
+      {
+        name: "Google Stitch",
+        desc: "New tool for designing user interfaces (UI) and building interactive prototypes from images or text descriptions. Exports to Figma.",
+        features: ["Image/text to UI design","Prototype generation","Figma export support"],
+        price: "Free (Preview)",
+        priceType: "free",
+        url: "stitch.withgoogle.com"
+      },
+      {
+        name: "Project IDX",
+        desc: "Google's next-generation cloud IDE. Eliminates local installations with full-stack cloud development, Firebase integration, and device simulators.",
+        features: ["Full-stack cloud IDE","Firebase integration","Built-in simulators"],
+        price: "Free (basic) / Pay for cloud resources",
+        priceType: "freemium",
+        url: "idx.dev"
+      },
+      {
+        name: "AppSheet",
+        desc: "No-Code platform for building enterprise applications directly on top of Google Sheets data.",
+        features: ["No-code app builder","Google Sheets integration","Enterprise-ready apps"],
+        price: "From $5/user",
+        priceType: "paid",
+        url: "about.appsheet.com"
+      },
+      {
+        name: "Google Colab",
+        desc: "Cloud-based Python notebooks for data science and AI — like Jupyter Notebooks with free GPU access.",
+        features: ["Free GPU/TPU access","Python notebooks in cloud","Data science & ML ready"],
+        price: "Free / Pro ($10)",
+        priceType: "freemium",
+        url: "colab.research.google.com"
+      },
+      {
+        name: "Vertex AI",
+        desc: "Enterprise platform for building, training, and deploying AI models at scale on Google Cloud.",
+        features: ["Enterprise AI platform","Model training & deployment","Google Cloud integration"],
+        price: "Pay per use (Cloud)",
+        priceType: "paid",
+        url: "https://cloud.google.com/vertex-ai"
+      },
+      {
+        name: "Google Opal",
+        desc: "\"Vibe Coding\" tool — build complete business applications through natural language conversation, no coding required.",
+        features: ["Natural language to app","No coding required","Business app generation"],
+        price: "Free (limited) / Workspace",
+        priceType: "freemium",
+        url: "opal.withgoogle.com"
+      },
+      {
+        name: "Google Apps Script",
+        desc: "JavaScript scripting environment for automating workflows within Google tools — like Excel macros, but in the cloud.",
+        features: ["Automate Google Workspace","JavaScript-based","Cloud execution"],
+        price: "Free",
+        priceType: "free",
+        url: "script.google.com"
+      },
+      {
+        name: "Android Studio",
+        desc: "Google's official Android IDE with deeply integrated Gemini AI — code completion, AI-powered debugging, full lifecycle AI agent, documentation generation, and intelligent refactoring.",
+        features: ["Official Android IDE with Gemini AI","AI agent for full dev lifecycle","Smart code completion & debugging"],
+        price: "Free",
+        priceType: "free",
+        url: "developer.android.com/studio"
+      },
+      {
+        name: "MediaPipe Studio",
+        desc: "Browser-based interface for testing computer vision models — face detection, hand tracking, pose estimation, and more.",
+        features: ["Computer vision testing","Face & hand tracking","Browser-based, no install"],
+        price: "Free",
+        priceType: "free",
+        url: "mediapipe-studio.webapps.google.com"
+      },
+      {
+        name: "Gemini Code Assist",
+        desc: "AI-powered coding companion that provides intelligent code completion, generation, and transformation across popular IDEs.",
+        features: ["AI code completion","Multi-IDE support","Code generation & refactoring"],
+        price: "Free tier / Enterprise",
+        priceType: "freemium",
+        url: "cloud.google.com/gemini/docs/codeassist/overview"
+      },
+      {
+        name: "Firebase Genkit",
+        desc: "Open-source framework for building AI-powered features in your apps with Firebase integration and observability.",
+        features: ["AI app framework","Firebase integration","Built-in observability"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "firebase.google.com/products/genkit"
+      },
+      {
+        name: "Colab AI",
+        desc: "AI coding assistant built into Google Colab — get code suggestions, explanations, and debugging help while working in notebooks.",
+        features: ["In-notebook AI assistant","Code explanation","Smart debugging help"],
+        price: "Free / Pro ($10)",
+        priceType: "freemium",
+        url: "colab.research.google.com"
+      },
+      {
+        name: "Gemini in Android",
+        desc: "On-device Gemini AI integration for Android phones — smart replies, content summarization, and contextual assistance.",
+        features: ["On-device AI assistant","Smart contextual help","Android native integration"],
+        price: "Free (with Android)",
+        priceType: "free",
+        url: "android.com/intl/en_us/ai/"
+      },
+      {
+        name: "Firebase",
+        desc: "Google's Backend-as-a-Service (BaaS) platform for building web and mobile apps — includes Authentication, Firestore database, Hosting, Cloud Functions, and more.",
+        features: ["Authentication & Firestore DB","Cloud Functions & Hosting","Real-time data sync"],
+        price: "Free (Spark) / Pay as you go",
+        priceType: "freemium",
+        url: "firebase.google.com"
+      }
+    ]
+  },
+  {
+    category: "Audio, Music & Podcasts",
+    icon: "🎵",
+    color: "#b4ffda",
+    tools: [
+      {
+        name: "MusicFX (DJ Mode)",
+        desc: "AI music creation and real-time jamming using text prompts. Generate beats, melodies, and full tracks instantly.",
+        features: ["Real-time music generation","Text-to-music prompts","Interactive DJ mode"],
+        price: "Free",
+        priceType: "free",
+        url: "labs.google/fx/tools/music-fx",
+        notInIsrael: true
+      },
+      {
+        name: "Illuminate",
+        desc: "Converts academic papers and technical books into engaging audio conversations (\"learning podcasts\").",
+        features: ["Academic papers to audio","Learning podcast format","Technical content support"],
+        price: "Free (Labs version)",
+        priceType: "free",
+        url: "illuminate.google.com"
+      },
+      {
+        name: "NotebookLM (Audio)",
+        desc: "AI research tool with audio podcast generation — upload your sources and get automatically generated discussion podcasts.",
+        features: ["Auto podcast from documents","Source-grounded discussions","Multi-format input"],
+        price: "Free",
+        priceType: "free",
+        url: "notebooklm.google.com"
+      },
+      {
+        name: "Google Cloud Speech-to-Text",
+        desc: "High-accuracy speech transcription supporting Hebrew and 100+ languages.",
+        features: ["125+ language support","Hebrew transcription","Real-time & batch modes"],
+        price: "Free (60 min) / Pay per minute",
+        priceType: "freemium",
+        url: "cloud.google.com/speech-to-text"
+      },
+      {
+        name: "Google Cloud Text-to-Speech",
+        desc: "Premium text-to-speech synthesis with natural-sounding Journey voices.",
+        features: ["Journey natural voices","Multi-language support","SSML customization"],
+        price: "Free (monthly quota) / Pay per character",
+        priceType: "freemium",
+        url: "cloud.google.com/text-to-speech"
+      },
+      {
+        name: "YouTube Studio (Podcasts)",
+        desc: "Manage and distribute podcasts on YouTube and YouTube Music with built-in analytics.",
+        features: ["Podcast hosting on YouTube","YouTube Music distribution","Built-in analytics"],
+        price: "Free",
+        priceType: "free",
+        url: "studio.youtube.com"
+      },
+      {
+        name: "Blob Opera",
+        desc: "Interactive ML experiment — create operatic harmonies in real-time. Uses generative voice synthesis trained on real opera singers, powered by TensorFlow.js.",
+        features: ["Real-time opera harmonies","Generative voice AI","TensorFlow.js powered"],
+        price: "Free",
+        priceType: "free",
+        url: "artsandculture.google.com/blob-opera"
+      },
+    ]
+  },
+  {
+    category: "Workspace & Productivity",
+    icon: "📊",
+    color: "#96e6ff",
+    tools: [
+      {
+        name: "Google Docs",
+        desc: "Word processor with \"Help me write\" AI — drafting, editing, and automatic text summarization.",
+        features: ["AI writing assistant","Auto summarization","Real-time collaboration"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "docs.google.com"
+      },
+      {
+        name: "Google Sheets",
+        desc: "AI-powered spreadsheets for data analysis, automatic formula creation, and intelligent classification.",
+        features: ["AI formula suggestions","Data analysis & insights","Auto classification"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "sheets.google.com"
+      },
+      {
+        name: "Google Slides",
+        desc: "Presentation creator with AI-generated background images and automatic slide layout.",
+        features: ["AI image generation","Auto slide arrangement","Template suggestions"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "slides.google.com"
+      },
+      {
+        name: "Google Meet",
+        desc: "Video conferencing with automatic meeting notes (\"Take notes for me\") and live caption translation.",
+        features: ["Auto meeting summaries","Live caption translation","Noise cancellation"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "meet.google.com"
+      },
+      {
+        name: "Google Drive",
+        desc: "Cloud storage with semantic search — ask natural language questions about your files' content.",
+        features: ["Semantic file search","AI-powered Q&A","15GB free storage"],
+        price: "15GB Free / Google One",
+        priceType: "freemium",
+        url: "drive.google.com"
+      },
+      {
+        name: "Google Keep",
+        desc: "Smart notes and lists with handwriting recognition (OCR) and automatic list creation from text.",
+        features: ["Handwriting OCR","Auto list creation","Cross-device sync"],
+        price: "Free",
+        priceType: "free",
+        url: "keep.google.com"
+      },
+      {
+        name: "Google Forms",
+        desc: "Survey and questionnaire builder — AI suggests relevant questions based on your form title.",
+        features: ["AI question suggestions","Auto response analysis","Multiple question types"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "forms.google.com"
+      },
+      {
+        name: "Google Sites",
+        desc: "Simple website builder for internal or external sites — no coding required.",
+        features: ["Drag-and-drop builder","No coding required","Workspace integration"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "sites.google.com"
+      },
+      {
+        name: "Disco",
+        desc: "Conceptual browser (powered by Gemini 3) that turns browsing into tool creation. GenTabs analyzes open tabs and auto-generates functional Micro-Apps.",
+        features: ["Auto Micro-App generation","Context-aware tab analysis","Gemini 3 powered"],
+        price: "Free",
+        priceType: "free",
+        url: "labs.google/disco",
+        notInIsrael: true
+      },
+      {
+        name: "CC",
+        desc: "AI agent that lives inside your inbox (Zero-UI) and acts as a proactive personal assistant — managing emails, scheduling, and tasks automatically.",
+        features: ["Zero-UI inbox assistant","Proactive email management","Auto scheduling & tasks"],
+        price: "N/A",
+        priceType: "paid",
+        url: "labs.google/cc",
+        notInIsrael: true
+      },
+      {
+        name: "Gemini in Gmail",
+        desc: "AI-powered email assistant built into Gmail — draft emails, summarize threads, find information, and get smart reply suggestions.",
+        features: ["AI email drafting","Thread summarization","Smart reply suggestions"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "workspace.google.com"
+      },
+      {
+        name: "Gemini in Docs",
+        desc: "AI writing and editing assistant integrated into Google Docs — generate content, rewrite text, and summarize documents.",
+        features: ["AI content generation","Text rewriting & editing","Document summarization"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "workspace.google.com"
+      },
+      {
+        name: "Gemini in Sheets",
+        desc: "AI data analyst in Google Sheets — generate formulas, analyze data patterns, and create charts from natural language.",
+        features: ["AI formula generation","Data pattern analysis","Natural language queries"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "workspace.google.com"
+      },
+      {
+        name: "Gemini in Slides",
+        desc: "AI presentation assistant in Google Slides — generate slides, create images, and design layouts from text prompts.",
+        features: ["AI slide generation","Image creation for slides","Auto layout design"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "workspace.google.com"
+      },
+      {
+        name: "Gemini in Meet",
+        desc: "AI meeting assistant for Google Meet — real-time transcription, automatic summaries, and live translation of captions.",
+        features: ["Real-time transcription","Auto meeting summaries","Live caption translation"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "workspace.google.com"
+      },
+      {
+        name: "Gemini in Drive",
+        desc: "AI-powered intelligent search and file assistant in Google Drive — find files, summarize content, and ask questions about your documents.",
+        features: ["Intelligent file search","Content summarization","Natural language Q&A"],
+        price: "Free / Business Workspace",
+        priceType: "freemium",
+        url: "workspace.google.com"
+      },
+      {
+        name: "Google Calendar",
+        desc: "Smart calendar with AI-powered scheduling suggestions, automatic event creation from emails, and optimal meeting time recommendations.",
+        features: ["AI scheduling suggestions","Auto events from emails","Optimal time finder"],
+        price: "Free / Workspace",
+        priceType: "freemium",
+        url: "calendar.google.com"
+      },
+      {
+        name: "Google Chat",
+        desc: "Team messaging platform with AI-powered conversation summaries, smart replies, and deep Workspace integration for seamless collaboration.",
+        features: ["AI conversation summaries","Smart reply suggestions","Workspace integration"],
+        price: "Free / Workspace",
+        priceType: "freemium",
+        url: "chat.google.com"
+      },
+      {
+        name: "Google Vault",
+        desc: "Enterprise eDiscovery and compliance tool for Google Workspace — data retention, legal holds, search, and export for audits and investigations.",
+        features: ["eDiscovery & compliance","Data retention policies","Legal hold & export"],
+        price: "Included in Enterprise Workspace",
+        priceType: "paid",
+        url: "vault.google.com"
+      },
+      {
+        name: "Google Tasks",
+        desc: "Core task management engine of Google Workspace — syncs with Calendar, Gmail, and other Workspace apps for seamless organizational task automation and goal tracking.",
+        features: ["Calendar & Gmail sync","Task automation workflows","Workspace-native integration"],
+        price: "Free / Workspace",
+        priceType: "freemium",
+        url: "tasks.google.com"
+      }
+    ]
+  },
+  {
+    category: "Knowledge & Search",
+    icon: "🔍",
+    color: "#ffb7b7",
+    tools: [
+      {
+        name: "NotebookLM",
+        desc: "Your \"second brain\" — AI chat and analysis grounded exclusively in the sources you upload.",
+        features: ["Source-only grounded AI","Upload any document format","Export summaries & notes"],
+        price: "Free",
+        priceType: "free",
+        url: "notebooklm.google.com"
+      },
+      {
+        name: "Google Lens",
+        desc: "Visual search — snap a photo to get instant information, translations, or homework solutions.",
+        features: ["Photo-based search","Instant translation","Homework solver"],
+        price: "Free",
+        priceType: "free",
+        url: "https://lens.google/"
+      },
+      {
+        name: "Google Trends",
+        desc: "Real-time search trend analysis — discover what the world is searching for right now.",
+        features: ["Real-time trend data","Regional comparisons","Historical analysis"],
+        price: "Free",
+        priceType: "free",
+        url: "trends.google.com"
+      },
+      {
+        name: "Google Scholar",
+        desc: "Academic search engine for research papers, legal literature, patents, and citations.",
+        features: ["Academic paper search","Citation tracking","Legal & patent search"],
+        price: "Free",
+        priceType: "free",
+        url: "scholar.google.com"
+      },
+      {
+        name: "Google Alerts",
+        desc: "Automatic email notifications whenever your specified keywords appear on the web.",
+        features: ["Keyword monitoring","Email notifications","Customizable frequency"],
+        price: "Free",
+        priceType: "free",
+        url: "google.com/alerts"
+      },
+      {
+        name: "Google Finance",
+        desc: "Stock tracking, financial market data, and business news aggregation.",
+        features: ["Stock & market tracking","Portfolio monitoring","Financial news feed"],
+        price: "Free",
+        priceType: "free",
+        url: "google.com/finance"
+      },
+      {
+        name: "Google Analytics 4",
+        desc: "The industry standard for analyzing website and app traffic, user behavior, and conversions.",
+        features: ["User behavior analytics","Conversion tracking","AI-powered insights"],
+        price: "Free / 360 (Enterprise)",
+        priceType: "freemium",
+        url: "analytics.google.com"
+      },
+      {
+        name: "Looker Studio",
+        desc: "Create beautiful interactive dashboards and reports from any data source (formerly Data Studio).",
+        features: ["Drag-and-drop dashboards","Multi-source data","Shareable reports"],
+        price: "Free",
+        priceType: "free",
+        url: "lookerstudio.google.com"
+      },
+      {
+        name: "Google Search Console",
+        desc: "Monitor your website's presence in Google Search results — check errors, indexing, and technical SEO.",
+        features: ["Search performance data","Index coverage reports","Technical SEO tools"],
+        price: "Free",
+        priceType: "free",
+        url: "search.google.com/search-console"
+      },
+      {
+        name: "Google Tag Manager",
+        desc: "Manage tracking tags, pixels, and analytics snippets on your website without developer involvement.",
+        features: ["No-code tag management","Event tracking","Third-party integrations"],
+        price: "Free",
+        priceType: "free",
+        url: "tagmanager.google.com"
+      },
+      {
+        name: "Google Ads",
+        desc: "Google's advertising platform — search ads, YouTube ads, and display banners with AI-powered creative generation.",
+        features: ["Search & display ads","YouTube advertising","AI creative generation"],
+        price: "Pay per click/impression",
+        priceType: "paid",
+        url: "ads.google.com"
+      },
+      {
+        name: "Food Mood",
+        desc: "GenAI experiment demonstrating computational creativity — fuses two cultural cuisines to create original fusion recipes.",
+        features: ["AI fusion recipe creation","Cultural cuisine mixing","Creative AI demo"],
+        price: "Free",
+        priceType: "free",
+        url: "artsandculture.google.com/food-mood"
+      }
+    ]
+  },
+  {
+    category: "Marketing & SEO",
+    icon: "📈",
+    color: "#ffd8be",
+    tools: [
+      {
+        name: "Google Analytics 4",
+        desc: "The industry standard for analyzing website traffic, user behavior, and marketing attribution.",
+        features: ["Cross-platform tracking","AI insights & predictions","Custom event tracking"],
+        price: "Free / 360 (Enterprise)",
+        priceType: "freemium",
+        url: "analytics.google.com"
+      },
+      {
+        name: "Google Search Console",
+        desc: "Essential SEO tool — monitor search visibility, fix indexing issues, and optimize your site's ranking.",
+        features: ["Search ranking data","Sitemap management","Core Web Vitals"],
+        price: "Free",
+        priceType: "free",
+        url: "search.google.com/search-console"
+      },
+      {
+        name: "Google Tag Manager",
+        desc: "Deploy and manage all your marketing tags and tracking pixels without touching code.",
+        features: ["No-code tag deployment","Version control","Debug mode"],
+        price: "Free",
+        priceType: "free",
+        url: "tagmanager.google.com"
+      },
+      {
+        name: "Looker Studio",
+        desc: "Build visual marketing dashboards and client reports from any data source — completely free.",
+        features: ["Marketing dashboards","Client report templates","Real-time data"],
+        price: "Free",
+        priceType: "free",
+        url: "lookerstudio.google.com"
+      },
+      {
+        name: "PageSpeed Insights",
+        desc: "Test your website's speed and get actionable recommendations for improving Core Web Vitals performance.",
+        features: ["Speed performance testing","Core Web Vitals scores","Optimization tips"],
+        price: "Free",
+        priceType: "free",
+        url: "pagespeed.web.dev"
+      },
+      {
+        name: "Google Business Profile",
+        desc: "Manage your business presence on Google Maps and Search — hours, reviews, photos, and updates (formerly Google My Business).",
+        features: ["Google Maps listing","Review management","Business insights"],
+        price: "Free",
+        priceType: "free",
+        url: "business.google.com"
+      },
+      {
+        name: "TextFX",
+        desc: "Creative writing tool for writers and lyricists — find rhymes, similes, alliterations, and wordplay.",
+        features: ["Rhyme generator","Simile & metaphor finder","Alliteration tools"],
+        price: "Free",
+        priceType: "free",
+        url: "textfx.withgoogle.com"
+      },
+      {
+        name: "Say What You See",
+        desc: "Learn prompt engineering for image generation through an interactive game of describing images.",
+        features: ["Prompt writing practice","Image description game","AI literacy tool"],
+        price: "Free",
+        priceType: "free",
+        url: "artsandculture.google.com"
+      },
+      {
+        name: "GenType",
+        desc: "Create custom AI-generated fonts — complete alphabets made from images based on your prompt (e.g., letters made of bread).",
+        features: ["Custom AI font creation","Prompt-based alphabets","Creative typography"],
+        price: "Free",
+        priceType: "free",
+        url: "https://labs.google/gentype"
+      },
+      {
+        name: "Google Arts & Culture",
+        desc: "Virtual museum tours, cultural games, and artistic AI experiments for creative inspiration.",
+        features: ["Virtual museum exploration","AI art experiments","Cultural discovery"],
+        price: "Free",
+        priceType: "free",
+        url: "artsandculture.google.com"
+      },
+      {
+        name: "Pomelli",
+        desc: "GenAI experiment demonstrating computational creativity — creates visual mashups of cultural and culinary concepts.",
+        features: ["AI creative mashups","Cultural visualization","Experimental AI art"],
+        price: "Free",
+        priceType: "free",
+        url: "labs.google.com/pomelli",
+        notInIsrael: true
+      },
+      {
+        name: "Google Market Finder",
+        desc: "Strategic tool for analyzing global business opportunities — identifies potential markets, advertising costs, consumer behavior, and regulations by country.",
+        features: ["Global market analysis","Ad cost comparisons","Consumer behavior data"],
+        price: "Free",
+        priceType: "free",
+        url: "https://www.thinkwithgoogle.com/"
+      },
+      {
+        name: "Google Ads AI",
+        desc: "AI-powered advertising platform that automates campaign optimization, bidding strategies, and ad creative generation.",
+        features: ["Smart bidding automation","AI ad creative generation","Audience targeting optimization"],
+        price: "Pay per click/impression",
+        priceType: "paid",
+        url: "ads.google.com"
+      },
+      {
+        name: "Performance Max",
+        desc: "Google's AI-driven campaign type that maximizes conversions across all Google channels — Search, Display, YouTube, Gmail, Maps, and Discover.",
+        features: ["Cross-channel optimization","AI-driven bidding","Automated creative assets"],
+        price: "Pay per click/impression",
+        priceType: "paid",
+        url: "ads.google.com/intl/en/home/campaigns/performance-max/"
+      },
+      {
+        name: "Google Analytics 4 AI Insights",
+        desc: "Machine learning-powered insights within GA4 that automatically surface anomalies, trends, and predictive metrics.",
+        features: ["Predictive analytics","Anomaly detection","Automated insights"],
+        price: "Free / 360 (Enterprise)",
+        priceType: "freemium",
+        url: "analytics.google.com"
+      },
+      {
+        name: "Search Console Insights",
+        desc: "Combines Google Search Console and Analytics data to show how people discover your content and what resonates.",
+        features: ["Content performance data","Discovery channel analysis","Combined search & analytics"],
+        price: "Free",
+        priceType: "free",
+        url: "search.google.com/search-console/insights"
+      },
+      {
+        name: "Google Merchant Center",
+        desc: "The core platform for Google e-commerce — upload product data to appear in Google Shopping, Search, YouTube, and across Google's surfaces.",
+        features: ["Google Shopping listings","Product feed management","Cross-channel commerce"],
+        price: "Free",
+        priceType: "free",
+        url: "merchants.google.com"
+      },
+      {
+        name: "Google Ad Manager",
+        desc: "Supply-side ad serving platform for publishers and large websites to manage, sell, and optimize their advertising inventory programmatically.",
+        features: ["Publisher ad management","Programmatic selling","Revenue optimization"],
+        price: "Free / Premium",
+        priceType: "freemium",
+        url: "admanager.google.com"
+      }
+    ]
+  },
+  {
+    category: "Utility & Tech",
+    icon: "🔧",
+    color: "#b4ffda",
+    tools: [
+      {
+        name: "Google Takeout",
+        desc: "Download and backup all your personal data from your Google account — emails, photos, Drive files, and more.",
+        features: ["Full account data export","Multiple format options","Scheduled backups"],
+        price: "Free",
+        priceType: "free",
+        url: "takeout.google.com"
+      },
+      {
+        name: "Google Business Profile",
+        desc: "Manage your business card on Google Maps and Search — opening hours, reviews, and customer interactions.",
+        features: ["Google Maps management","Customer reviews","Business analytics"],
+        price: "Free",
+        priceType: "free",
+        url: "business.google.com"
+      },
+      {
+        name: "Google Public DNS",
+        desc: "Free DNS service for faster and more secure internet browsing (addresses: 8.8.8.8 and 8.8.4.4).",
+        features: ["Faster DNS resolution","Enhanced security","Global infrastructure"],
+        price: "Free",
+        priceType: "free",
+        url: "developers.google.com/speed/public-dns"
+      },
+      {
+        name: "Google Alerts",
+        desc: "Get email notifications whenever new mentions of specific words or names appear online.",
+        features: ["Brand monitoring","Competitor tracking","Custom alert frequency"],
+        price: "Free",
+        priceType: "free",
+        url: "google.com/alerts"
+      },
+      {
+        name: "Google Finance",
+        desc: "Track stocks, capital markets, and stay updated with financial news.",
+        features: ["Stock market tracking","Portfolio watchlists","Financial news"],
+        price: "Free",
+        priceType: "free",
+        url: "google.com/finance"
+      },
+      {
+        name: "Google Flights / Travel",
+        desc: "Flight search and price comparison engine — also covers hotels, activities, and complete trip planning.",
+        features: ["Flight price comparison","Hotel & activity booking","Price tracking alerts"],
+        price: "Free",
+        priceType: "free",
+        url: "google.com/travel"
+      },
+      {
+        name: "VirusTotal",
+        desc: "Global cybersecurity service (owned by Google / Chronicle) that analyzes files, URLs, and IP addresses to detect malware, viruses, and cyber threats.",
+        features: ["File & URL scanning","Malware detection","Threat intelligence database"],
+        price: "Free / Premium API",
+        priceType: "freemium",
+        url: "virustotal.com"
+      },
+      {
+        name: "Google One",
+        desc: "Google's central subscription platform. Beyond storage management (Drive/Photos/Gmail), it's the exclusive gateway to Gemini Advanced, premium AI features in Workspace, and AI-powered Dark Web Monitoring for account security.",
+        features: ["Gemini Advanced access","Expanded cloud storage","AI Dark Web Monitoring"],
+        price: "From $1.99/month",
+        priceType: "paid",
+        url: "one.google.com"
+      }
+    ]
+  },
+  {
+    category: "Cloud AI & ML APIs",
+    icon: "☁️",
+    color: "#96e6ff",
+    tools: [
+      {
+        name: "Vertex AI Agent Builder",
+        desc: "Build and deploy conversational AI agents and search applications powered by foundation models on Google Cloud.",
+        features: ["Conversational AI agents","Grounded in your data","Enterprise deployment"],
+        price: "Pay per use (Cloud)",
+        priceType: "paid",
+        url: "cloud.google.com/products/agent-builder"
+      },
+      {
+        name: "Vertex AI Search",
+        desc: "Enterprise search solution powered by foundation models — search across websites, structured data, and unstructured documents.",
+        features: ["AI-powered enterprise search","Multi-source indexing","Semantic understanding"],
+        price: "Pay per use (Cloud)",
+        priceType: "paid",
+        url: "cloud.google.com/enterprise-search"
+      },
+      {
+        name: "Document AI",
+        desc: "Machine learning-based document processing — extract structured data from forms, invoices, receipts, and contracts.",
+        features: ["Document data extraction","Form & invoice parsing","Pre-trained document models"],
+        price: "Pay per page processed",
+        priceType: "paid",
+        url: "cloud.google.com/document-ai"
+      },
+      {
+        name: "Cloud Vision API",
+        desc: "Image analysis API for detecting objects, reading text (OCR), identifying faces, and classifying images at scale.",
+        features: ["Object detection","OCR text extraction","Image classification"],
+        price: "Pay per request",
+        priceType: "paid",
+        url: "cloud.google.com/vision"
+      },
+      {
+        name: "Cloud Translation API",
+        desc: "Neural machine translation API supporting 100+ languages with automatic language detection and glossary support.",
+        features: ["100+ languages","Auto language detection","Custom glossaries"],
+        price: "Pay per character",
+        priceType: "paid",
+        url: "cloud.google.com/translate"
+      },
+      {
+        name: "Cloud Natural Language",
+        desc: "NLP API for analyzing text — extract entities, detect sentiment, classify content, and parse syntax.",
+        features: ["Sentiment analysis","Entity extraction","Content classification"],
+        price: "Pay per request",
+        priceType: "paid",
+        url: "cloud.google.com/natural-language"
+      },
+      {
+        name: "BigQuery ML",
+        desc: "Create and execute machine learning models directly in BigQuery using SQL — no data movement required.",
+        features: ["ML with SQL syntax","In-database training","No data export needed"],
+        price: "Pay per query (BigQuery pricing)",
+        priceType: "paid",
+        url: "cloud.google.com/bigquery/docs/bqml-introduction"
+      },
+      {
+        name: "reCAPTCHA Enterprise",
+        desc: "AI-powered bot detection and fraud prevention — protects websites from automated abuse without disrupting legitimate users.",
+        features: ["Bot detection","Fraud prevention","Frictionless verification"],
+        price: "Free tier / Pay per assessment",
+        priceType: "freemium",
+        url: "cloud.google.com/recaptcha-enterprise"
+      },
+      {
+        name: "Google Cloud Run",
+        desc: "Serverless container platform for deploying and scaling applications — ideal for deploying AI apps without managing servers.",
+        features: ["Serverless containers","Auto-scaling","Pay per use"],
+        price: "Pay per use",
+        priceType: "paid",
+        url: "cloud.google.com/run"
+      }
+    ]
+  },
+  {
+    category: "ML Frameworks & Developer Tools",
+    icon: "🧬",
+    color: "#ffb7b7",
+    tools: [
+      {
+        name: "TensorFlow",
+        desc: "Google's open-source machine learning framework — the industry standard for building and training neural networks at any scale.",
+        features: ["Production-grade ML framework","Massive ecosystem","GPU/TPU acceleration"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "tensorflow.org"
+      },
+      {
+        name: "TensorFlow.js",
+        desc: "Run machine learning models directly in the browser or Node.js — train and deploy ML without a server.",
+        features: ["Browser-based ML","Node.js support","Pre-trained model library"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "tensorflow.org/js"
+      },
+      {
+        name: "TensorFlow Lite",
+        desc: "Optimized ML framework for mobile and edge devices — deploy models on Android, iOS, microcontrollers, and IoT.",
+        features: ["Mobile & edge ML","Model optimization","Cross-platform deployment"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "tensorflow.org/lite"
+      },
+      {
+        name: "JAX",
+        desc: "High-performance numerical computing library by Google — GPU/TPU-accelerated NumPy with automatic differentiation.",
+        features: ["High-performance computing","Auto differentiation","GPU/TPU native"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "github.com/google/jax"
+      },
+      {
+        name: "Keras",
+        desc: "High-level deep learning API that runs on top of TensorFlow, JAX, and PyTorch — makes building neural networks intuitive.",
+        features: ["Simple deep learning API","Multi-backend support","Rapid prototyping"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "keras.io"
+      },
+      {
+        name: "Kaggle",
+        desc: "The world's largest data science and machine learning platform (owned by Google). Features datasets, open models, competitions, and collaborative notebooks — essential for any data researcher.",
+        features: ["ML competitions & datasets","Collaborative notebooks","Open model repository"],
+        price: "Free",
+        priceType: "free",
+        url: "kaggle.com"
+      },
+      {
+        name: "Mesop",
+        desc: "Google's Python-based framework for rapidly building AI and web application UIs — no frontend knowledge required.",
+        features: ["Python-only UI framework","AI app interfaces","No frontend skills needed"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "google.github.io/mesop"
+      }
+    ]
+  },
+  {
+    category: "Mobile & On-Device AI",
+    icon: "📱",
+    color: "#b4ffda",
+    tools: [
+      {
+        name: "Google Photos AI",
+        desc: "AI-powered photo management — automatic organization, smart search, memory creation, and intelligent editing suggestions.",
+        features: ["Auto photo organization","Smart search by content","AI memory creation"],
+        price: "Free (15GB) / Google One",
+        priceType: "freemium",
+        url: "photos.google.com"
+      },
+      {
+        name: "Magic Eraser",
+        desc: "AI-powered object removal tool in Google Photos — tap to erase unwanted people, objects, or distractions from photos.",
+        features: ["One-tap object removal","AI scene reconstruction","Works on any photo"],
+        price: "Free (Pixel) / Google One",
+        priceType: "freemium",
+        url: "blog.google/products/photos/magic-eraser/"
+      },
+      {
+        name: "Best Take",
+        desc: "AI feature that combines multiple group photos to give everyone their best expression — no more blinking or awkward faces.",
+        features: ["Group photo optimizer","Face expression swap","AI composite photos"],
+        price: "Free (Pixel)",
+        priceType: "free",
+        url: "blog.google/products/pixel/best-take/"
+      },
+      {
+        name: "Photo Unblur",
+        desc: "AI enhancement that sharpens and restores blurry or old photos — works on photos from any camera, not just Pixel.",
+        features: ["AI photo sharpening","Old photo restoration","Universal camera support"],
+        price: "Free (Pixel) / Google One",
+        priceType: "freemium",
+        url: "blog.google/products/photos/photo-unblur/"
+      },
+      {
+        name: "Recorder AI",
+        desc: "Smart voice recorder with real-time transcription, speaker labeling, and AI-powered summaries of recorded conversations.",
+        features: ["Real-time transcription","Speaker identification","AI conversation summaries"],
+        price: "Free (Pixel/Android)",
+        priceType: "free",
+        url: "play.google.com/store/apps/details?id=com.google.android.apps.recorder"
+      },
+      {
+        name: "Live Translate",
+        desc: "Real-time translation for conversations, messages, and media — works on-device for instant multilingual communication.",
+        features: ["Real-time conversation translation","On-device processing","Multi-app support"],
+        price: "Free (Pixel/Android)",
+        priceType: "free",
+        url: "android.com/intl/en_us/ai/"
+      },
+      {
+        name: "Circle to Search",
+        desc: "Circle, highlight, or tap anything on your Android screen to instantly search for it with Google — no app switching needed.",
+        features: ["On-screen visual search","Gesture-based search","Instant results overlay"],
+        price: "Free (Android)",
+        priceType: "free",
+        url: "blog.google/products/search/circle-to-search-android/"
+      }
+    ]
+  },
+  {
+    category: "Research & Science",
+    icon: "🔬",
+    color: "#ffd8be",
+    tools: [
+      {
+        name: "AlphaFold",
+        desc: "DeepMind's revolutionary AI system for predicting 3D protein structures — transformed biology and drug discovery worldwide.",
+        features: ["Protein structure prediction","200M+ protein database","Nobel Prize-winning AI"],
+        price: "Free (open source)",
+        priceType: "free",
+        url: "alphafold.ebi.ac.uk"
+      },
+      {
+        name: "Google DeepMind",
+        desc: "Google's AI research lab pushing the frontiers of artificial intelligence — behind AlphaGo, AlphaFold, Gemini, and more.",
+        features: ["Frontier AI research","Breakthrough discoveries","Open research publications"],
+        price: "Free (research access)",
+        priceType: "free",
+        url: "deepmind.google"
+      },
+      {
+        name: "Google Earth Engine",
+        desc: "Scientific cloud platform for planetary-scale geospatial and environmental data analysis. Used by researchers, governments, and NGOs to run models on satellite imagery. Distinct from Google Earth Studio (a creator animation tool).",
+        features: ["Planetary-scale geospatial analysis","Satellite imagery processing","Scientific & government use"],
+        price: "Free (research) / Commercial",
+        priceType: "freemium",
+        url: "earthengine.google.com"
+      },
+      {
+        name: "Project Genie",
+        desc: "DeepMind's breakthrough Foundation World Model that generates interactive 2D environments and video games from single images — a pioneering step toward AI-generated virtual worlds.",
+        features: ["Foundation World Model","Interactive 2D environment generation","Single image to playable game"],
+        price: "Free (Research)",
+        priceType: "free",
+        url: "deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/"
+      }
+    ]
+  }
+];
+
+// ==========================================
+// RENDER & FUNCTIONALITY
+// ==========================================
+
+const mainEl = document.getElementById('mainContent');
+const searchInput = document.getElementById('searchInput');
+const filtersBar = document.getElementById('filtersBar');
+const visibleCountEl = document.getElementById('visibleCount');
+const totalCountEl = document.getElementById('totalCount');
+const noResultsEl = document.getElementById('noResults');
+const backTopBtn = document.getElementById('backTop');
+
+let activeCategory = 'all';
+
+// Count total tools
+const totalTools = TOOLS_DATA.reduce((sum, cat) => sum + cat.tools.length, 0);
+totalCountEl.textContent = totalTools;
+
+// Build filter chips
+TOOLS_DATA.forEach(cat => {
+    const chip = document.createElement('button');
+    chip.className = 'filter-chip';
+    chip.dataset.category = cat.category;
+    chip.innerHTML = `${cat.icon} ${cat.category} <span class="chip-count">${cat.tools.length}</span>`;
+    filtersBar.appendChild(chip);
+});
+
+// Render all tools
+function render() {
+    const query = searchInput.value.toLowerCase().trim();
+    mainEl.innerHTML = '';
+    let visibleCount = 0;
+
+    TOOLS_DATA.forEach(cat => {
+        if (activeCategory !== 'all' && activeCategory !== cat.category) return;
+
+        const filteredTools = cat.tools.filter(t => {
+            if (!query) return true;
+            return t.name.toLowerCase().includes(query) ||
+                   t.desc.toLowerCase().includes(query) ||
+                   t.features.some(f => f.toLowerCase().includes(query)) ||
+                   t.price.toLowerCase().includes(query);
+        });
+
+        if (filteredTools.length === 0) return;
+        visibleCount += filteredTools.length;
+
+        const section = document.createElement('section');
+        section.className = 'category-section fade-in';
+        section.innerHTML = `
+            <div class="category-header">
+                <div class="category-icon" style="background:${cat.color}22; color:${cat.color}">${cat.icon}</div>
+                <h2>${cat.category}</h2>
+                <span class="cat-count">${filteredTools.length} tool${filteredTools.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="tools-grid">
+                ${filteredTools.map(t => renderCard(t)).join('')}
+            </div>
+        `;
+        mainEl.appendChild(section);
+    });
+
+    visibleCountEl.textContent = visibleCount;
+    noResultsEl.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+function renderCard(t) {
+    const urlDisplay = t.url.replace(/^https?:\/\//, '').replace(/\/$/, '').split('?')[0];
+    const fullUrl = t.url.startsWith('http') ? t.url : 'https://' + t.url;
+    const priceClass = `price-${t.priceType}`;
+
+    return `
+    <div class="tool-card">
+        <div class="tool-card-top">
+            <div class="tool-name">${t.name}</div>
+            <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="tool-link" title="Open ${t.name}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+        </div>
+        <div class="tool-desc">${t.desc}</div>
+        <ul class="tool-features">
+            ${t.features.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+        <div class="tool-meta">
+            <span class="price-tag ${priceClass}">${t.price}</span>
+            ${t.notInIsrael ? '<span class="not-israel">Not available in Israel</span>' : ''}
+            <span class="tool-url">${urlDisplay}</span>
+        </div>
+    </div>`;
+}
+
+// Search
+let searchTimeout;
+searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(render, 200);
+});
+
+// Filters
+filtersBar.addEventListener('click', (e) => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    activeCategory = chip.dataset.category;
+    filtersBar.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render();
+});
+
+// Back to top
+window.addEventListener('scroll', () => {
+    backTopBtn.classList.toggle('visible', window.scrollY > 500);
+});
+
+// Initial render
+render();
+</script>
+</body>
+</html>
